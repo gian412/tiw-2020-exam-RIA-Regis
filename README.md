@@ -1,6 +1,6 @@
 # tiw-2020-exam-Regis
 
-### Project for Web Technologies course's exam
+### RIA version project for Web Technologies course's exam
 
 
 
