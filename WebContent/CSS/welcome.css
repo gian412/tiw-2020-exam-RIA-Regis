@@ -24,3 +24,7 @@
 form {
     display: inline-block;
 }
+
+.loginErrorMessage, .usernameError, .passwordError {
+    display: none;
+}

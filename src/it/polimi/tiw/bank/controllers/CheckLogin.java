@@ -4,11 +4,7 @@ import it.polimi.tiw.bank.beans.User;
 import it.polimi.tiw.bank.dao.AnonymousUserDAO;
 import it.polimi.tiw.bank.utils.ClientHandler;
 import it.polimi.tiw.bank.utils.Encryption;
-import it.polimi.tiw.bank.utils.MultiPathMessageResolver;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -41,38 +37,30 @@ public class CheckLogin extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String username, password, usernameToHash = null, passwordToHash = null;
 
+        
         try { // Get username and password from the request
-            usernameToHash = req.getParameter("username");
-            passwordToHash = req.getParameter("password");
+            usernameToHash = StringEscapeUtils.escapeJava(req.getParameter("username"));
+            passwordToHash = StringEscapeUtils.escapeJava(req.getParameter("password"));
         } catch (NullPointerException e) {
             e.printStackTrace(); // TODO: remove after test
 
-            // Redirect to login.html with error message
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("errorMessage", "Username and password cannot be empty");
-            String path = "/login.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+            // Reply with error message
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Username and password cannot be empty");
             return;
         }
 
-        if (usernameToHash==null || usernameToHash.equals("")) {
-            // Redirect to login.html with username error message
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("usernameErrorMessage", "Username can't be empty");
-            String path = "/login.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+        if (usernameToHash==null || usernameToHash.isEmpty()) {
+            // Reply with username error message
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Username can't be empty");
             return;
         }
 
-        if (passwordToHash==null || passwordToHash.equals("")) {
-            // Redirect to login.html with password error message
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("passwordErrorMessage", "Password can't be empty");
-            String path = "/login.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+        if (passwordToHash==null || passwordToHash.isEmpty()) {
+            // Reply with password error message
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Password can't be empty");
             return;
         }
 
@@ -86,42 +74,32 @@ public class CheckLogin extends HttpServlet {
             user = anonymousUserDAO.findUserByUsername(username);
         } catch (SQLException e) {
             e.printStackTrace(); // TODO: remove after test
-
-            // Redirect to login.html with error message
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("username", usernameToHash);
-            ctx.setVariable("errorMessage", "Unable to access DB, try again later");
-            String path = "/login.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+    
+            // Reply with internal error message
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().println("Internal server error, try again later");
             return;
         }
 
         if (user==null) { // No user with this username
-            // Redirect to login.html with username error message
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("username", usernameToHash);
-            ctx.setVariable("usernameErrorMessage", "Wrong username");
-            String path = "/login.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+            // Reply with username error message
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            resp.getWriter().println("Wrong username");
             return;
         }
 
         String path;
         if (user.getPassword().equals(password)) { // Password correspond
             req.getSession().setAttribute("user", user); // Save user in the session
-            path = getServletContext().getContextPath() + "/Home";
-            resp.sendRedirect(path);
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().println(user.getId());
         }
-
-        // Redirect to login.html with password error message
-        ServletContext servletContext = getServletContext();
-        final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-        ctx.setVariable("username", usernameToHash);
-        ctx.setVariable("passwordErrorMessage", "Wrong password");
-        path = "/login.html";
-        templateEngine.process(path, ctx, resp.getWriter());
+    
+        // Reply with password error message
+        resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        resp.getWriter().println("Wrong password");
 
     }
 

@@ -5,11 +5,6 @@ import it.polimi.tiw.bank.dao.AnonymousUserDAO;
 import it.polimi.tiw.bank.utils.ClientHandler;
 import it.polimi.tiw.bank.utils.Email;
 import it.polimi.tiw.bank.utils.Encryption;
-import it.polimi.tiw.bank.utils.MultiPathMessageResolver;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -62,27 +57,27 @@ public class CreateUser extends HttpServlet {
         }
 
         // Set error indicators
-        if ( firstName==null || firstName.equals("") ) {
+        if ( firstName==null || firstName.isEmpty() ) {
             fn = true;
         }
 
-        if ( lastName==null || lastName.equals("") ) {
+        if ( lastName==null || lastName.isEmpty() ) {
             ln = true;
         }
 
-        if ( usernameToHash==null || usernameToHash.equals("") ) {
+        if ( usernameToHash==null || usernameToHash.isEmpty() ) {
             un = true;
         }
 
-        if ( email==null || email.equals("") ) {
+        if ( email==null || email.isEmpty() ) {
             em = true;
         }
 
-        if ( passwordToHash==null || passwordToHash.equals("") ) {
+        if ( passwordToHash==null || passwordToHash.isEmpty() ) {
             pw = true;
         }
 
-        if ( secondPassword==null || secondPassword.equals("") ) {
+        if ( secondPassword==null || secondPassword.isEmpty() ) {
             spw = true;
         }
 

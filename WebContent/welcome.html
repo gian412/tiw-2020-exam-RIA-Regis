@@ -24,25 +24,26 @@
 
 <div id="login-modal-box" class="modal">
 
-    <form action="#">
+    <form class="modal-form animate" action="#">
 
         <div class="container">
             <p>Please login to your account</p>
-            <span id="loginClose" class="close" title="Close Login">&times;</span>
+            <span id="login-close" class="close" title="Close Login">&times;</span>
         </div>
 
         <div class="container">
-            <label for="username">Username: </label>
+            <label for="login-username">Username: </label>
             <input type="text" placeholder="Enter your username" id="login-username" name="username" required><br>
-            <p class="loginError"></p><br class="loginError">
+            <p id="usernameError" class="usernameError"></p><br class="usernameError">
 
-            <label for="password">Password: </label>
+            <label for="login-password">Password: </label>
             <input type="password" placeholder="Enter your password" id="login-password" name="password" required><br>
-            <p class="passwordError"></p><br class="passwordError">
+            <input type="checkbox" id="show-login-password"><label for="show-login-password" >Show password</label><br>
+            <p id="passwordError" class="passwordError"></p><br class="passwordError">
 
-            <input type="button" value="Login">
+            <input type="button" id="loginButton" value="Login">
 
-            <p class="errorMessage"></p><br class="errorMessage">
+            <p id="loginErrorMessage" class="loginErrorMessage"></p><br class="loginErrorMessage">
         </div>
 
     </form>
@@ -51,13 +52,13 @@
 
 <div id="sign-up-modal-box" class="modal">
 
-    <form action="#">
+    <form class="modal-form animate" action="#">
 
         <!-- Information input request -->
         <div class="container">
             <p>Please, give us some information about you:</p>
             <p class="errorMessage"></p><br class="errorMessage">
-            <span id="sign-up-close" class="close" title="Close Login">&times;</span>
+            <span id="sign-up-close" class="close" title="Close Sign sup">&times;</span>
         </div>
 
         <div class="container">
@@ -72,8 +73,8 @@
             <p class="lnErrorMessage"></p><br class="lnErrorMessage">
 
             <!-- Username -->
-            <label for="username" >Username: </label>
-            <input type="text" id="username" name="username" placeholder="Enter your username" required><br>
+            <label for="sign-up-username" >Username: </label>
+            <input type="text" id="sign-up-username" name="username" placeholder="Enter your username" required><br>
             <p class="unErrorMessage" ></p><br class="unErrorMessage">
 
             <!-- Email -->
@@ -83,17 +84,21 @@
             <p class="emRegexError" ></p><br class="emRegexError">
 
             <!-- Password -->
-            <label for="password" >Password: </label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required><br>
+            <label for="sign-up-password1" >Password: </label>
+            <input type="password" id="sign-up-password1" name="password" placeholder="Enter your password" required><br>
+            <input type="checkbox" id="show-sign-up-password1">
+            <label for="show-sign-up-password1" >Show password</label><br>
             <p class="pwErrorMessage"></p><br class="pwErrorMessage">
 
             <!-- Password verification -->
-            <label for="password-2" >Repeat password: </label>
-            <input type="password" id="password-2" value="prova" name="password-2" placeholder="Enter your password again" required><br>
+            <label for="sign-up-password2" >Repeat password: </label>
+            <input type="password" id="sign-up-password2" value="prova" name="password-2" placeholder="Enter your password again" required><br>
+            <input type="checkbox" id="show-sign-up-password2">
+            <label for="show-sign-up-password2" >Show password</label><br>
             <p class="spwErrorMessage" ></p><br class="spwErrorMessage">
 
 
-            <input type="button" value="Sign up">
+            <input type="button" id="signUpButton" value="Sign up">
         </div>
     </form>
 

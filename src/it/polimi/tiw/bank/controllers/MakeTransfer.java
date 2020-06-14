@@ -66,7 +66,7 @@ public class MakeTransfer extends HttpServlet {
         }
 
         // Check origin account id and parseInt
-        if (originAccountIdString!=null && !originAccountIdString.equals("")) {
+        if (originAccountIdString!=null && !originAccountIdString.isEmpty()) {
             try {
                 originAccountId = Integer.parseInt(originAccountIdString);
             } catch (NumberFormatException e) {
@@ -105,7 +105,7 @@ public class MakeTransfer extends HttpServlet {
         }
 
         // check user id and parseInt
-        if (destinationUserIdString!=null && !destinationUserIdString.equals("")) {
+        if (destinationUserIdString!=null && !destinationUserIdString.isEmpty()) {
             try {
                 destinationUserId = Integer.parseInt(destinationUserIdString);
             } catch (NumberFormatException e) {
@@ -140,7 +140,7 @@ public class MakeTransfer extends HttpServlet {
         }
 
         // Check account id and parseInt
-        if (destinationAccountIdString!=null && !destinationAccountIdString.equals("")) {
+        if (destinationAccountIdString!=null && !destinationAccountIdString.isEmpty()) {
             try {
                 destinationAccountId = Integer.parseInt(destinationAccountIdString);
             } catch (NumberFormatException e) {
@@ -175,7 +175,7 @@ public class MakeTransfer extends HttpServlet {
         }
 
         // Check causal
-        if (causal==null || causal.equals("")) {
+        if (causal==null || causal.isEmpty()) {
             // Redirect to accountStatus.html with error message
             ServletContext servletContext = getServletContext();
             final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
@@ -206,7 +206,7 @@ public class MakeTransfer extends HttpServlet {
         }
 
         // Check amount and parseDouble
-        if (amountString!=null && !amountString.equals("")) {
+        if (amountString!=null && !amountString.isEmpty()) {
             try {
                 amount = Double.parseDouble(amountString);
             } catch (NumberFormatException e) {

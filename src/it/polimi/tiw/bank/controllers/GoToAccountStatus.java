@@ -54,7 +54,7 @@ public class GoToAccountStatus extends HttpServlet {
             return;
         }
 
-        if (id==null || id.equals("")) {
+        if (id==null || id.isEmpty()) {
             ServletContext servletContext = getServletContext();
             final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
             ctx.setVariable("errorMessage", "Account id can't be empty");
