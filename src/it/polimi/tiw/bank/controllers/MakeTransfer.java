@@ -5,11 +5,6 @@ import it.polimi.tiw.bank.beans.User;
 import it.polimi.tiw.bank.dao.TransferDAO;
 import it.polimi.tiw.bank.dao.UserDAO;
 import it.polimi.tiw.bank.utils.ClientHandler;
-import it.polimi.tiw.bank.utils.MultiPathMessageResolver;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -27,7 +22,6 @@ public class MakeTransfer extends HttpServlet {
 
     private static final double serialVersionUID = 1L;
     private Connection connection;
-    private TemplateEngine templateEngine;
 
     public MakeTransfer() {
         super();
@@ -35,14 +29,9 @@ public class MakeTransfer extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+
         connection = ClientHandler.getConnection(getServletContext());
-        ServletContext servletContext = getServletContext();
-        ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver( servletContext );
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        this.templateEngine = new TemplateEngine();
-        this.templateEngine.setTemplateResolver(templateResolver);
-        this.templateEngine.setMessageResolver(new MultiPathMessageResolver(servletContext, "i18n"));
-        templateResolver.setSuffix(".html");
+
     }
 
     @Override

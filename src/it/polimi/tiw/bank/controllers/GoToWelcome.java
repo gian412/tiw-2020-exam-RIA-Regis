@@ -1,14 +1,5 @@
 package it.polimi.tiw.bank.controllers;
 
-import it.polimi.tiw.bank.utils.MultiPathMessageResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,7 +12,6 @@ import java.io.IOException;
 public class GoToWelcome extends HttpServlet {
 
     private static final double serialVersionUID = 1L;
-    private TemplateEngine templateEngine;
 
     public GoToWelcome() {
         super();

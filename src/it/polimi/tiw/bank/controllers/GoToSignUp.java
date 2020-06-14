@@ -1,11 +1,5 @@
 package it.polimi.tiw.bank.controllers;
 
-import it.polimi.tiw.bank.utils.MultiPathMessageResolver;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,7 +12,6 @@ import java.io.IOException;
 public class GoToSignUp extends HttpServlet {
 
     private static final double serialVersionUID = 1L;
-    private TemplateEngine templateEngine;
 
     public GoToSignUp() {
         super();

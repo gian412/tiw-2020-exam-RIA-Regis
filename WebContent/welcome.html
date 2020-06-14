@@ -1,28 +1,103 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Welcome to your bank account</title>
-    <link rel="stylesheet" type="text/css" media="all" href="CSS/general.css" th:href="@{CSS/general.css}"/>
-    <link rel="stylesheet" type="text/css" media="all" href="CSS/welcome.css" th:href="@{CSS/welcome.css}"/>
+    <link rel="stylesheet" type="text/css" media="all" href="CSS/general.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="CSS/welcome.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="CSS/modal.css" />
+    <script src="JS/welcome.js" charset="utf-8" defer></script>
 </head>
 <body>
 <div class="header">
     <img class="cover" alt="Cover" src="/tiw_2020_exam_Regis/resources/cover.jpg" />
     <div class="heading">
-        <h1 class="title" th:text="#{title}">Welcome to Bank Account</h1>
-        <h2 class="subTitle" th:text="#{subTitle}">Love to pay again</h2>
+        <h1 class="title">Welcome to Bank Account</h1>
+        <h2 class="subTitle">Love to pay again</h2>
     </div>
 </div>
 
-<h3 th:text="#{call}">Want to join us?</h3>
+<h3>Want to join us?</h3>
 
-<form method="get" action="Login">
-    <input type="submit" value="Login" th:value="#{login}">
-</form>
-<form method="get" action="SignUp">
-    <input type="submit" value="Sign up" th:value="#{signUp}">
-</form>
+<button type="button" id="login">Login</button>
+<button type="button" id="sign-up">Sign up</button>
+
+<div id="login-modal-box" class="modal">
+
+    <form action="#">
+
+        <div class="container">
+            <p>Please login to your account</p>
+            <span id="loginClose" class="close" title="Close Login">&times;</span>
+        </div>
+
+        <div class="container">
+            <label for="username">Username: </label>
+            <input type="text" placeholder="Enter your username" id="login-username" name="username" required><br>
+            <p class="loginError"></p><br class="loginError">
+
+            <label for="password">Password: </label>
+            <input type="password" placeholder="Enter your password" id="login-password" name="password" required><br>
+            <p class="passwordError"></p><br class="passwordError">
+
+            <input type="button" value="Login">
+
+            <p class="errorMessage"></p><br class="errorMessage">
+        </div>
+
+    </form>
+
+</div>
+
+<div id="sign-up-modal-box" class="modal">
+
+    <form action="#">
+
+        <!-- Information input request -->
+        <div class="container">
+            <p>Please, give us some information about you:</p>
+            <p class="errorMessage"></p><br class="errorMessage">
+            <span id="sign-up-close" class="close" title="Close Login">&times;</span>
+        </div>
+
+        <div class="container">
+            <!-- Name -->
+            <label for="firstname" >Name: </label>
+            <input type="text" id="firstname" name="firstname" placeholder="Enter your first name" required><br>
+            <p class="fnErrorMessage"></p><br class="fnErrorMessage">
+
+            <!-- Surname -->
+            <label for="lastname" >Surname: </label>
+            <input type="text" id="lastname" name="lastname" placeholder="Enter your last name" required><br>
+            <p class="lnErrorMessage"></p><br class="lnErrorMessage">
+
+            <!-- Username -->
+            <label for="username" >Username: </label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required><br>
+            <p class="unErrorMessage" ></p><br class="unErrorMessage">
+
+            <!-- Email -->
+            <label for="email" >Email: </label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required><br>
+            <p class="emErrorMessage"></p><br class="emErrorMessage">
+            <p class="emRegexError" ></p><br class="emRegexError">
+
+            <!-- Password -->
+            <label for="password" >Password: </label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required><br>
+            <p class="pwErrorMessage"></p><br class="pwErrorMessage">
+
+            <!-- Password verification -->
+            <label for="password-2" >Repeat password: </label>
+            <input type="password" id="password-2" value="prova" name="password-2" placeholder="Enter your password again" required><br>
+            <p class="spwErrorMessage" ></p><br class="spwErrorMessage">
+
+
+            <input type="button" value="Sign up">
+        </div>
+    </form>
+
+</div>
 
 </body>
 </html>

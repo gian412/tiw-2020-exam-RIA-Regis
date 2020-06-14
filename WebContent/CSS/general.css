@@ -10,8 +10,8 @@ button, input[type=submit], .file-upload, .top-menu a {
 }
 
 /* Buttons and submit field hover style */
-input[type=submit]:hover, .file-upload:hover,
-input[type=submit]:focus, .file-upload:focus {
+button:hover, input[type=submit]:hover, .file-upload:hover,
+button:focus, input[type=submit]:focus, .file-upload:focus {
     background-color: #c49991;
     color: #44ccff;
 }

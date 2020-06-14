@@ -25,7 +25,6 @@ public class CheckLogin extends HttpServlet {
 
     private static final double serialVersionUID = 1L;
     private Connection connection;
-    private TemplateEngine templateEngine;
 
     public CheckLogin() {
         super();
@@ -35,13 +34,6 @@ public class CheckLogin extends HttpServlet {
     public void init() throws ServletException {
 
         connection = ClientHandler.getConnection(getServletContext());
-        ServletContext servletContext = getServletContext();
-        ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver( servletContext );
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        this.templateEngine = new TemplateEngine();
-        this.templateEngine.setTemplateResolver(templateResolver);
-        this.templateEngine.setMessageResolver(new MultiPathMessageResolver(servletContext, "i18n"));
-        templateResolver.setSuffix(".html");
 
     }
 
