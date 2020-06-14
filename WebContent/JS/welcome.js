@@ -96,14 +96,9 @@
         if (pwd1.value !== pwd2.value) {
             pwd1.style.borderColor = '#ff0000';
             pwd2.style.borderColor = '#ff0000';
-
-            let signUpButton = document.getElementById('signUpButton');
-            signUpButton.disable = true;
         } else {
             pwd1.style.borderColor = '#cccccc';
             pwd2.style.borderColor = '#cccccc';
-            let signUpButton = document.getElementById('signUpButton');
-            signUpButton.disable = false;
         }
 
     });

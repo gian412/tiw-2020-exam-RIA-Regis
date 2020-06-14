@@ -1,43 +1,43 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>Home</title>
-        <link rel="stylesheet" type="text/css" media="all" href="/CSS/general.css" th:href="@{CSS/general.css}"/>
-        <link rel="stylesheet" type="text/css" media="all" href="/CSS/home.css" th:href="@{CSS/home.css}"/>
+        <link rel="stylesheet" type="text/css" media="all" href="/CSS/general.css" />
+        <link rel="stylesheet" type="text/css" media="all" href="/CSS/home.css" />
     </head>
     <body>
         <div class="top-menu">
 
             <form method="get" class="logout" action="Logout">
-                <input type="submit" value="Logout" th:value="#{logout}">
+                <input type="submit" value="Logout">
             </form>
 
         </div>
 
         <div class="main">
 
-            <h1 th:text="#{title} +  ${userId}">Homepage User 0001</h1>
+            <h1>Homepage User <span id="user_id"></span></h1>
 
             <!-- If there is any account, show it -->
-            <table th:if="${not #lists.isEmpty(accounts)}">
+            <table id="accounts">
                 <thead>
                     <tr>
-                        <th th:text="#{headId}">Account ID</th>
-                        <th th:text="#{headBalance}">Balance</th>
+                        <th >Account ID</th>
+                        <th >Balance</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="account : ${accounts}">
-                        <td th:text="${account.id}">1111</td> <!-- TODO: format number -->
-                        <td th:text="${account.balance}">1000 €</td> <!-- TODO: format number and add € -->
-                        <td><a th:href="@{AccountStatus(id=${account.id})}" th:text="#{accountStatus}">Account status</a></td>
+                    <tr>
+                        <td class="account_id"></td> <!-- TODO: format number -->
+                        <td class="account_balance">1000 €</td> <!-- TODO: format number and add € -->
+                        <td><a href="#">Account status</a></td>
                     </tr>
                 </tbody>
             </table>
 
             <!-- If there isn't any account, show message -->
-            <p th:if="${#lists.isEmpty(accounts)}">No account yet</p>
+            <!-- <p >No account yet</p> -->
 
         </div>
     </body>

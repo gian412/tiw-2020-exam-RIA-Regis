@@ -169,7 +169,6 @@ public class CreateUser extends HttpServlet {
             return;
         }
 
-        String path;
         try {
             user = anonymousUserDAO.findUserByUsername(username);
         } catch (SQLException e) {

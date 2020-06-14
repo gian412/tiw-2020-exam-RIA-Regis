@@ -88,8 +88,7 @@ public class CheckLogin extends HttpServlet {
             resp.getWriter().println("Wrong username");
             return;
         }
-
-        String path;
+        
         if (user.getPassword().equals(password)) { // Password correspond
             req.getSession().setAttribute("user", user); // Save user in the session
             resp.setStatus(HttpServletResponse.SC_OK);
