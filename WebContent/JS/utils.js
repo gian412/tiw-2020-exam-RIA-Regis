@@ -1,7 +1,7 @@
 function makeCall(method, url, formElement, callBack, reset = true) {
 
     var request = new XMLHttpRequest(); // Visible by closure
-    req.onreadystatechange = function() {
+    request.onreadystatechange = function() {
 
         callBack(request)
 

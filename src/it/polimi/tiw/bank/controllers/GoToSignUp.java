@@ -11,7 +11,7 @@ import java.io.IOException;
 @WebServlet("/SignUp")
 public class GoToSignUp extends HttpServlet {
 
-    private static final double serialVersionUID = 1L;
+    /*private static final double serialVersionUID = 1L;
 
     public GoToSignUp() {
         super();
@@ -42,6 +42,6 @@ public class GoToSignUp extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.doGet(req, resp);
-    }
+    }*/
 
 }

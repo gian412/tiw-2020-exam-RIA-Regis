@@ -20,7 +20,7 @@ import java.sql.SQLException;
 @WebServlet("/MakeTransfer")
 public class MakeTransfer extends HttpServlet {
 
-    private static final double serialVersionUID = 1L;
+    /*private static final double serialVersionUID = 1L;
     private Connection connection;
 
     public MakeTransfer() {
@@ -379,5 +379,5 @@ public class MakeTransfer extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace(); // TODO: remove after test
         }
-    }
+    }*/
 }

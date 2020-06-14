@@ -22,7 +22,7 @@ import java.util.List;
 @WebServlet("/AccountStatus")
 public class GoToAccountStatus extends HttpServlet {
 
-    private static final double serialVersionUID = 1L;
+    /*private static final double serialVersionUID = 1L;
     private Connection connection;
 
     public GoToAccountStatus() {
@@ -143,5 +143,5 @@ public class GoToAccountStatus extends HttpServlet {
             e.printStackTrace(); // TODO: remove after test
         }
 
-    }
+    }*/
 }

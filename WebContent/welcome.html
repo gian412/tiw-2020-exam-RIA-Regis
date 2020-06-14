@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="ISO-8859-1">
     <title>Welcome to your bank account</title>
     <link rel="stylesheet" type="text/css" media="all" href="CSS/general.css" />
     <link rel="stylesheet" type="text/css" media="all" href="CSS/welcome.css" />
     <link rel="stylesheet" type="text/css" media="all" href="CSS/modal.css" />
     <script src="JS/welcome.js" charset="utf-8" defer></script>
+    <script src="JS/utils.js" charset="utf-8" defer></script>
+    <script src="JS/accessManagement.js" charset="utf-8" defer></script>
 </head>
 <body>
 <div class="header">
@@ -34,16 +36,16 @@
         <div class="container">
             <label for="login-username">Username: </label>
             <input type="text" placeholder="Enter your username" id="login-username" name="username" required><br>
-            <p id="usernameError" class="usernameError"></p><br class="usernameError">
+            <p id="usernameError" class="usernameError error"></p><br class="usernameError error">
 
             <label for="login-password">Password: </label>
             <input type="password" placeholder="Enter your password" id="login-password" name="password" required><br>
             <input type="checkbox" id="show-login-password"><label for="show-login-password" >Show password</label><br>
-            <p id="passwordError" class="passwordError"></p><br class="passwordError">
+            <p id="passwordError" class="passwordError error"></p><br class="passwordError error">
 
             <input type="button" id="loginButton" value="Login">
 
-            <p id="loginErrorMessage" class="loginErrorMessage"></p><br class="loginErrorMessage">
+            <p id="loginErrorMessage" class="loginErrorMessage error"></p><br class="loginErrorMessage error">
         </div>
 
     </form>
@@ -57,7 +59,6 @@
         <!-- Information input request -->
         <div class="container">
             <p>Please, give us some information about you:</p>
-            <p class="errorMessage"></p><br class="errorMessage">
             <span id="sign-up-close" class="close" title="Close Sign sup">&times;</span>
         </div>
 
@@ -65,40 +66,41 @@
             <!-- Name -->
             <label for="firstname" >Name: </label>
             <input type="text" id="firstname" name="firstname" placeholder="Enter your first name" required><br>
-            <p class="fnErrorMessage"></p><br class="fnErrorMessage">
+            <p id="fnErrorMessage" class="fnErrorMessage error"></p><br class="fnErrorMessage error">
 
             <!-- Surname -->
             <label for="lastname" >Surname: </label>
             <input type="text" id="lastname" name="lastname" placeholder="Enter your last name" required><br>
-            <p class="lnErrorMessage"></p><br class="lnErrorMessage">
+            <p id="lnErrorMessage" class="lnErrorMessage error"></p><br class="lnErrorMessage error">
 
             <!-- Username -->
             <label for="sign-up-username" >Username: </label>
             <input type="text" id="sign-up-username" name="username" placeholder="Enter your username" required><br>
-            <p class="unErrorMessage" ></p><br class="unErrorMessage">
+            <p id="unErrorMessage" class="unErrorMessage error" ></p><br class="unErrorMessage error">
 
             <!-- Email -->
             <label for="email" >Email: </label>
             <input type="email" id="email" name="email" placeholder="Enter your email" required><br>
-            <p class="emErrorMessage"></p><br class="emErrorMessage">
-            <p class="emRegexError" ></p><br class="emRegexError">
+            <p id="emErrorMessage" class="emErrorMessage error"></p><br class="emErrorMessage error">
 
             <!-- Password -->
             <label for="sign-up-password1" >Password: </label>
             <input type="password" id="sign-up-password1" name="password" placeholder="Enter your password" required><br>
             <input type="checkbox" id="show-sign-up-password1">
             <label for="show-sign-up-password1" >Show password</label><br>
-            <p class="pwErrorMessage"></p><br class="pwErrorMessage">
+            <p id="pwErrorMessage" class="pwErrorMessage error"></p><br class="pwErrorMessage error">
 
             <!-- Password verification -->
             <label for="sign-up-password2" >Repeat password: </label>
             <input type="password" id="sign-up-password2" value="prova" name="password-2" placeholder="Enter your password again" required><br>
             <input type="checkbox" id="show-sign-up-password2">
             <label for="show-sign-up-password2" >Show password</label><br>
-            <p class="spwErrorMessage" ></p><br class="spwErrorMessage">
+            <p id="spwErrorMessage" class="spwErrorMessage error" ></p><br class="spwErrorMessage error">
 
 
             <input type="button" id="signUpButton" value="Sign up">
+
+            <p id="signUpErrorMessage" class="signUpErrorMessage error"></p><br class="signUpErrorMessage error">
         </div>
     </form>
 

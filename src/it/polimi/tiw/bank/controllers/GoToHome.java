@@ -35,7 +35,7 @@ public class GoToHome extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        // Get user from the session
+        /*// Get user from the session
         User user = new User();
         HttpSession httpSession = req.getSession();
         user = (User) httpSession.getAttribute("user");
@@ -60,7 +60,7 @@ public class GoToHome extends HttpServlet {
         final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
         ctx.setVariable("userId", user.getId());
         ctx.setVariable("accounts", accounts);
-        templateEngine.process(path, ctx, resp.getWriter());
+        templateEngine.process(path, ctx, resp.getWriter());*/
 
     }
 

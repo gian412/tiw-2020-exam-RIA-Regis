@@ -5,9 +5,11 @@ import it.polimi.tiw.bank.dao.AnonymousUserDAO;
 import it.polimi.tiw.bank.utils.ClientHandler;
 import it.polimi.tiw.bank.utils.Email;
 import it.polimi.tiw.bank.utils.Encryption;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @WebServlet("/CreateUser")
+@MultipartConfig
 public class CreateUser extends HttpServlet {
 
     private static final double serialVersionUID = 1L;
@@ -37,112 +40,76 @@ public class CreateUser extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String firstName, lastName, usernameToHash, username, email, passwordToHash, password, secondPassword;
-        boolean fn = false, ln = false, un = false, em = false, pw = false, spw = false;
-        try {
-            firstName = req.getParameter("firstname");
-            lastName = req.getParameter("lastname");
-            usernameToHash = req.getParameter("username");
-            email = req.getParameter("email");
-            passwordToHash = req.getParameter("password");
-            secondPassword = req.getParameter("password-2");
+        
+        try { // Get sign up parameters from the request
+            firstName = StringEscapeUtils.escapeJava(req.getParameter("firstname"));
+            lastName = StringEscapeUtils.escapeJava(req.getParameter("lastname"));
+            usernameToHash = StringEscapeUtils.escapeJava(req.getParameter("username"));
+            email = StringEscapeUtils.escapeJava(req.getParameter("email"));
+            passwordToHash = StringEscapeUtils.escapeJava(req.getParameter("password"));
+            secondPassword = StringEscapeUtils.escapeJava(req.getParameter("password-2"));
         } catch (NullPointerException e) {
             e.printStackTrace();// TODO: remove after test
-            // Redirect to signUp.html with generic error message
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("errorMessage", "All fields must be filled");
-            String path = "/signUp.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+    
+            // Reply with error message
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("All fields must be filled");
             return;
         }
 
         // Set error indicators
         if ( firstName==null || firstName.isEmpty() ) {
-            fn = true;
-        }
-
-        if ( lastName==null || lastName.isEmpty() ) {
-            ln = true;
-        }
-
-        if ( usernameToHash==null || usernameToHash.isEmpty() ) {
-            un = true;
-        }
-
-        if ( email==null || email.isEmpty() ) {
-            em = true;
-        }
-
-        if ( passwordToHash==null || passwordToHash.isEmpty() ) {
-            pw = true;
-        }
-
-        if ( secondPassword==null || secondPassword.isEmpty() ) {
-            spw = true;
-        }
-
-        if (fn || ln || un || em || pw || spw) {
-            // Redirect to signUp.html with relative error messages
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-
-            // Set error messages
-            if (fn) {
-                ctx.setVariable("fnErrorMessage", "First name can't be empty");
-            } else {
-                ctx.setVariable("firstName", firstName);
-            }
-
-            if (ln) {
-                ctx.setVariable("lnErrorMessage", "Last name can't be empty");
-            } else {
-                ctx.setVariable("lastName", lastName);
-            }
-
-            if (un) {
-                ctx.setVariable("unErrorMessage", "Username can't be empty");
-            } else {
-                ctx.setVariable("username", usernameToHash);
-            }
-
-            if (em) {
-                ctx.setVariable("emErrorMessage", "Email can't be empty");
-            } else if (Email.isValid(email)) {
-                ctx.setVariable("emRegexError", "Email not valid");
-            } else {
-                ctx.setVariable("email", email);
-            }
-
-            if (pw) {
-                ctx.setVariable("pwErrorMessage", "Password can't be empty");
-            } else {
-                ctx.setVariable("password", passwordToHash);
-            }
-
-            if (spw) {
-                ctx.setVariable("spwErrorMessage", "Password can't be empty");
-            } else {
-                ctx.setVariable("secondPassword", secondPassword);
-            }
-
-            String path = "/signUp.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+            // Reply with fnErrorMessage
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("First name can't be empty");
             return;
         }
 
+        if ( lastName==null || lastName.isEmpty() ) {
+            // Reply with lnErrorMessage
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Last name can't be empty");
+            return;
+        }
+
+        if ( usernameToHash==null || usernameToHash.isEmpty() ) {
+            // Reply with unErrorMessage
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Username can't be empty");
+            return;
+        }
+
+        if ( email==null || email.isEmpty() ) {
+            // Reply with emErrorMessage
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Email can't be empty");
+            return;
+        } else if (!Email.isValid(email)) {
+            // Reply with emRegexError
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Email not valid");
+            return;
+        }
+
+        if ( passwordToHash==null || passwordToHash.isEmpty() ) {
+            // Reply with pwErrorMessage
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Password can't be empty");
+            return;
+        }
+
+        if ( secondPassword==null || secondPassword.isEmpty() ) {
+            // Reply with spwErrorMessage
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Second password can't be empty");
+            return;
+        }
+        
+
         if (!passwordToHash.equals(secondPassword)) {
-            // Redirect to signUp.html with second password error message
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("firstName", firstName);
-            ctx.setVariable("lastName", lastName);
-            ctx.setVariable("username", usernameToHash);
-            ctx.setVariable("email", email);
-            ctx.setVariable("password", passwordToHash);
-            ctx.setVariable("secondPassword", secondPassword);
-            ctx.setVariable("spwErrorMessage", "Password must be equals");
-            String path = "/signUp.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+            // Reply with spwErrorMessage
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Passwords must be equals");
             return;
         }
 
@@ -156,34 +123,17 @@ public class CreateUser extends HttpServlet {
             user = anonymousUserDAO.findUserByUsername(username);
         } catch (SQLException e) {
             e.printStackTrace(); // TODO: remove after test
-            // Redirect to signUp.html with generic error message
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("errorMessage", "Unable to access DB, try again later");
-            ctx.setVariable("firstName", firstName);
-            ctx.setVariable("lastName", lastName);
-            ctx.setVariable("username", usernameToHash);
-            ctx.setVariable("email", email);
-            ctx.setVariable("password", passwordToHash);
-            ctx.setVariable("secondPassword", secondPassword);
-            String path = "/signUp.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+    
+            // Reply with internal error message
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().println("Internal server error, try again later");
             return;
         }
 
         if (user!=null) {
-            // Redirect to signUp.html with username error message
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("firstName", firstName);
-            ctx.setVariable("lastName", lastName);
-            ctx.setVariable("username", usernameToHash);
-            ctx.setVariable("unErrorMessage", "Username already in use, choose another one");
-            ctx.setVariable("email", email);
-            ctx.setVariable("password", passwordToHash);
-            ctx.setVariable("secondPassword", secondPassword);
-            String path = "/signUp.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+            // Reply with unErrorMessage
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Username already in use, choose another one");
             return;
         }
 
@@ -192,34 +142,17 @@ public class CreateUser extends HttpServlet {
             user = anonymousUserDAO.findUserByEmail(email);
         } catch (SQLException e) {
             e.printStackTrace(); // TODO: remove after test
-            // Redirect to signUp.html with generic error message
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("errorMessage", "Unable to access DB, try again later");
-            ctx.setVariable("firstName", firstName);
-            ctx.setVariable("lastName", lastName);
-            ctx.setVariable("username", usernameToHash);
-            ctx.setVariable("email", email);
-            ctx.setVariable("password", passwordToHash);
-            ctx.setVariable("secondPassword", secondPassword);
-            String path = "/signUp.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+    
+            // Reply with internal error message
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().println("Internal server error, try again later");
             return;
         }
 
         if (user!=null) {
-            // Redirect to signUp.html with username error message
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("firstName", firstName);
-            ctx.setVariable("lastName", lastName);
-            ctx.setVariable("username", usernameToHash);
-            ctx.setVariable("email", email);
-            ctx.setVariable("emErrorMessage", "Email already associated to another account, try another email");
-            ctx.setVariable("password", passwordToHash);
-            ctx.setVariable("secondPassword", secondPassword);
-            String path = "/signUp.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+            // Reply with emErrorMessage
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Email already associated to another account, try another email");
             return;
         }
 
@@ -229,18 +162,10 @@ public class CreateUser extends HttpServlet {
             anonymousUserDAO.createUser(firstName, lastName, username, email, password);
         } catch (SQLException e) {
             e.printStackTrace(); // TODO: remove after test
-            // Redirect to signUp.html with generic error message
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("errorMessage", "Unable to create profile, try again later");
-            ctx.setVariable("firstName", firstName);
-            ctx.setVariable("lastName", lastName);
-            ctx.setVariable("username", usernameToHash);
-            ctx.setVariable("email", email);
-            ctx.setVariable("password", passwordToHash);
-            ctx.setVariable("secondPassword", secondPassword);
-            String path = "/signUp.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+    
+            // Reply with internal error message
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().println("Internal server error, try again later");
             return;
         }
 
@@ -249,35 +174,25 @@ public class CreateUser extends HttpServlet {
             user = anonymousUserDAO.findUserByUsername(username);
         } catch (SQLException e) {
             e.printStackTrace(); // TODO: remove after test
-            // Redirect to login.html
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-            ctx.setVariable("username", usernameToHash);
-            ctx.setVariable("password", passwordToHash);
-            path = "/login.html";
-            templateEngine.process(path, ctx, resp.getWriter());
+    
+            // Reply with internal error message
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().println("Your profile was created successfully, but an internal server error occurred. Try to login");
             return;
         }
 
         if (user!=null) {
             req.getSession().setAttribute("user", user); // Save user in the session
-            path = getServletContext().getContextPath() + "/Home";
-            resp.sendRedirect(path);
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().println(user.getId());
             return;
         }
-
-        // Redirect to signUp.html with generic error message
-        ServletContext servletContext = getServletContext();
-        final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-        ctx.setVariable("errorMessage", "Something went wrong, try again later");
-        ctx.setVariable("firstName", firstName);
-        ctx.setVariable("lastName", lastName);
-        ctx.setVariable("username", usernameToHash);
-        ctx.setVariable("email", email);
-        ctx.setVariable("password", passwordToHash);
-        ctx.setVariable("secondPassword", secondPassword);
-        path = "/signUp.html";
-        templateEngine.process(path, ctx, resp.getWriter());
+    
+        // Reply with internal error message
+        resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        resp.getWriter().println("Your profile was created successfully, but an internal server error occurred. Try to login");
 
     }
 

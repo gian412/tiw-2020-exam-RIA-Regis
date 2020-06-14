@@ -6,8 +6,8 @@ import it.polimi.tiw.bank.utils.ClientHandler;
 import it.polimi.tiw.bank.utils.Encryption;
 import org.apache.commons.lang.StringEscapeUtils;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @WebServlet("/CheckLogin")
+@MultipartConfig
 public class CheckLogin extends HttpServlet {
 
     private static final double serialVersionUID = 1L;
@@ -35,8 +36,8 @@ public class CheckLogin extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        
         String username, password, usernameToHash = null, passwordToHash = null;
-
         
         try { // Get username and password from the request
             usernameToHash = StringEscapeUtils.escapeJava(req.getParameter("username"));
@@ -95,6 +96,7 @@ public class CheckLogin extends HttpServlet {
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");
             resp.getWriter().println(user.getId());
+            return;
         }
     
         // Reply with password error message

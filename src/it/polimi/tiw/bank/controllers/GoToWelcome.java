@@ -11,7 +11,7 @@ import java.io.IOException;
 @WebServlet("/Welcome")
 public class GoToWelcome extends HttpServlet {
 
-    private static final double serialVersionUID = 1L;
+    /*private static final double serialVersionUID = 1L;
 
     public GoToWelcome() {
         super();
@@ -42,6 +42,6 @@ public class GoToWelcome extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.doGet(req, resp);
-    }
+    }*/
 
 }
