@@ -36,7 +36,24 @@
             <!-- If there isn't any account, show message -->
             <p id="accountEmpty"></p>
 
-            <div class="transfers">
+            <div class="accountDetailContainer">
+
+                <!-- Account details -->
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Account ID</th>
+                        <th>Balance</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td id="accountDetailId"></td> <!-- TODO: format number -->
+                        <td id="accountDetailBalance"></td> <!-- TODO: format number and add € -->
+                    </tr>
+                    </tbody>
+                </table>
+                <p id="accountDetailsError" class="error"></p>
 
                 <!-- Outgoing transfers -->
                 <table id="outgoingContainer">
@@ -53,7 +70,7 @@
                 </table>
 
                 <!-- No outgoing transfers -->
-                <!-- <p th:if="${#lists.isEmpty(outgoingTransfers)}" th:text="#{noOutgoing}">No outgoing transfers yet</p> -->
+                <p id="outgoingTransfersError"></p>
 
                 <!-- Incoming transfers -->
                 <table class="incomingContainer">
@@ -70,7 +87,7 @@
                 </table>
 
                 <!-- No incoming transfers -->
-                <!-- <p th:if="${#lists.isEmpty(incomingTransfers)}" th:text="#{noIncoming}">No incoming transfers yet</p> -->
+                <p id="incomingTransfersError"></p>
 
             </div>
 
@@ -80,7 +97,7 @@
                 <fieldset>
                     <legend>Make a new transfer</legend>
 
-                    <form method="post" action="MakeTransfer">
+                    <form id="transferForm" action="#">
 
                         <p id="errorMessage" class="errorMessage error">General error</p><br class="errorMessage error">
 
