@@ -18,26 +18,105 @@
         <div class="main">
 
             <h1>Homepage User <span id="user_id"></span></h1>
+            <div id="error" class="error"></div>
 
             <!-- If there is any account, show it -->
-            <table id="accounts">
+            <table id="listContainer">
                 <thead>
                     <tr>
-                        <th >Account ID</th>
-                        <th >Balance</th>
+                        <th>Account ID</th>
+                        <th>Balance</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td class="account_id"></td> <!-- TODO: format number -->
-                        <td class="account_balance">1000 €</td> <!-- TODO: format number and add € -->
-                        <td><a href="#">Account status</a></td>
-                    </tr>
+                <tbody id="listBody">
                 </tbody>
             </table>
 
             <!-- If there isn't any account, show message -->
             <!-- <p >No account yet</p> -->
+
+            <div class="transfers">
+
+                <!-- Outgoing transfers -->
+                <table id="outgoingContainer">
+                    <thead>
+                        <tr>
+                            <th>Causal</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Destination account</th>
+                        </tr>
+                    </thead>
+                    <tbody id="outgoingBody">
+                    </tbody>
+                </table>
+
+                <!-- No outgoing transfers -->
+                <!-- <p th:if="${#lists.isEmpty(outgoingTransfers)}" th:text="#{noOutgoing}">No outgoing transfers yet</p> -->
+
+                <!-- Incoming transfers -->
+                <table class="incomingContainer">
+                    <thead>
+                        <tr>
+                            <th>Causal</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Origin account</th>
+                        </tr>
+                    </thead>
+                    <tbody class="incomingBody">
+                    </tbody>
+                </table>
+
+                <!-- No incoming transfers -->
+                <!-- <p th:if="${#lists.isEmpty(incomingTransfers)}" th:text="#{noIncoming}">No incoming transfers yet</p> -->
+
+            </div>
+
+            <!-- Create a new transfer form -->
+            <div class="newTransfer">
+
+                <fieldset>
+                    <legend>Make a new transfer</legend>
+
+                    <form method="post" action="MakeTransfer">
+
+                        <p id="errorMessage" class="errorMessage error">General error</p><br class="errorMessage error">
+
+                        <!-- Hidden originAccount -->
+                        <input type="hidden" name="origin" id="originAccountId" required>
+
+                        <!-- User ID -->
+                        <label for="userId">Destination User ID: </label>
+                        <input type="number" id="userId" min="1" step="1" placeholder="Enter destination User ID" name="user" required><br>
+                        <p id="userIdError" class="userIdError error">User ID error</p><br class="userIdError error">
+
+                        <!-- Account ID -->
+                        <label for="accountId">Destination Account ID: </label>
+                        <input type="number" id="accountId" min="1" step="1" placeholder="Enter destination Account ID" name="account" required><br>
+                        <p class="destinationAccountErrorMessage error">Destination Account error</p><br class="destinationAccountErrorMessage error">
+
+                        <!-- Causal -->
+                        <label for="causal">Causal: </label>
+                        <input type="text" id="causal" placeholder="Enter transfer causal" name="causal" required><br>
+                        <p id="causalErrorMessage" class="causalErrorMessage error">Causal error</p><br class="causalErrorMessage error">
+
+                        <!-- Amount -->
+                        <label for="amount">Amount: </label>
+                        <input type="number" id="amount" value="0" min="0.01" step="0.01" name="amount" required><br>
+                        <p id="amountErrorMessage" class="amountErrorMessage error">Amount error</p><br class="amountErrorMessage error">
+
+                        <!-- Submit button -->
+                        <input type="button" value="Make transfer">
+
+                    </form>
+
+                </fieldset>
+
+            </div>
+
+
 
         </div>
     </body>
