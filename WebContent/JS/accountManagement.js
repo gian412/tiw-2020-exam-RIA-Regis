@@ -1,7 +1,7 @@
 (function () {
 
     // Page components
-    var accountList, accountStatus, outgoingList, incomingList, newTransfer, pageOrchestrator = new PageOrchestrator();
+    var userMessage, accountList, accountStatus, accountDetails, outgoingList, incomingList, newTransfer, pageOrchestrator = new PageOrchestrator();
 
     // Event on window load
     window.addEventListener('load', () => {
@@ -9,7 +9,15 @@
         pageOrchestrator.refresh() // Show initial components
     }, false);
 
-    // Constructors of view components
+    // User id message in title
+    function UserMessage(_userId, idContainer) {
+        this.userId = _userId;
+        this.show = function() {
+            idContainer.textContent = this.userId;
+        }
+    }
+
+    // List of user's account
     function AccountList(_error, _listContainer, _listBody ) {
 
         this.error = _error;
@@ -32,14 +40,13 @@
         };
 
         this.update = function (arrayAccount) {
-            // TODO: fill with received json values
-            var length = arrayAccount.length, element, i, row, idCell, balanceCell, linkCell, anchor, linkText;
-            if (length == 0) {
+            let length = arrayAccount.length, row, idCell, balanceCell, linkCell, anchor, linkText;
+            if (length === 0) {
                 this.error.textContent = "No account yet";
             } else {
                 this.listBody.innerHTML = ""; // Empty the table body
                 // Build updated list
-                var that = this;
+                let that = this;
                 arrayAccount.forEach(function (account) {
                     row = document.createElement("tr"); // Create row
 
@@ -61,7 +68,7 @@
                     anchor.appendChild(linkText); // Add text to anchor
                     anchor.setAttribute('accountId', account.id); // Add account ID as attribute to anchor
                     anchor.addEventListener('click', (e) => { // Add event on anchor click
-                        // TODO: accountStatus.show(e.target.getAttribute("accountId"));
+                        accountStatus.show(e.target.getAttribute("accountId"));
                     }, false);
                     anchor.href = "#"; // Add fake href
                     row.appendChild(linkCell); // Add link cell to row
@@ -76,20 +83,177 @@
         this.reset = function () {
             this.listContainer.style.visibility = "hidden";
         };
+
+        this.autoclick = function (accountId) {
+            let e = new Event('click');
+            let selector = "a[accountId='" + accountId + "']";
+            let anchorToClick = (accountId) ? document.querySelector(selector) : this.listBody.querySelector("a")[0];
+            anchorToClick.dispatchEvent(e);
+        };
     }
 
+    // Element that control incoming and outgoing transfers's lists and new
+    // transfer's form component
+    function AccountStatus(options) {
+        this.accountDetails = options['accountDetails'];
+        this.accountDetailsError = options['accountDetailsError'];
+        this.outgoingTransfers = options['outgoingTransfers'];
+        this.outgoingMessage = options['outgoingMessage'];
+        this.incomingTransfers = options['incomingTransfers'];
+        this.incomingMessage = options['incomingMessage'];
+        this.transferForm = options['transferForm'];
+        this.transferFormError = options['transferFormError'];
+
+        this.registerEvent = function(orchestrator) {
+            this.transferForm.querySelector("input[type='button']").addEventListener('click', (e) => {
+                var form = e.target.closest("form");
+                if (form.checkValidity()) {
+                    var that = this, originAccount = form.querySelector("input[type='hidden']").value;
+                    makeCall("POST", "MakeTransfer", form, function (request) {
+                        if (request.readyState === XMLHttpRequest.DONE) {
+                            var message = request.responseText;
+                            if (request.status === 200) { // Ok
+                                orchestrator.refresh(originAccount);
+                            } else {
+                                that.transferFormError.textContent = message; // TODO: divide in different error
+                            }
+                        }
+                    });
+                } else {
+                    form.reportValidity();
+                }
+            });
+        };
+
+        this.show = function(accountId) {
+            var self = this;
+            makeCall("GET", "AccountDetails?accountId=" + accountId, null, 
+                function(request) {
+                    if (request.readyState === XMLHttpRequest.DONE) {
+                        var message = request.responseText;
+                        if (request.status === 200) { // Ok
+                            var account = JSON.parse(message);
+                            self.accountDetails.update(account);
+                        } else { // BadRequest and InternalServerError
+                            self.accountDetailsError.textContent = message;
+                        }
+                    }
+                }
+            );
+            makeCall("GET", "OutgoingTransfers?accountId=" + accountId, null,
+                function(request) {
+                    if (request.readyState === XMLHttpRequest.DONE) {
+                        var message = request.responseText;
+                        if (request.status === 200) { // Ok
+                            var transfers = JSON.parse(message);
+                            self.outgoingTransfers.update(transfers);
+                        } else { // Bad request, Unauthorized and InternalServerError
+                            self.outgoingMessage.textContent = message;
+                        }
+                    }
+                }
+            );
+            makeCall("GET", "IncomingTransfers?accountId=" + accountId, null,
+                function(request) {
+                    if (request.readyState === XMLHttpRequest.DONE) {
+                        var message = request.responseText;
+                        if (request.status === 200) { // Ok
+                            var transfers = JSON.parse(message);
+                            self.incomingTransfers.update(transfers);
+                        } else { // Bad request, Unauthorized and InternalServerError
+                            self.incomingMessage.textContent = message;
+                        }
+                    }
+                }
+            );
+        };
+
+        this.reset = function() {
+            this.accountDetails.reset();
+            this.outgoingTransfers.reset();
+            this.incomingTransfers.reset();
+            this.newTransferForm.reset();
+        };
+    }
+
+    // Element that controls account details' table
+    function AccountDetails() {
+        
+        this.update = function(account) {
+            // TODO: put account in account details table
+        };
+
+        this.reset = function() {
+            // TODO: this.element.style.visibility = "hidden";
+        };
+
+    }
+
+    // Element that control the outgoing transfer's list
+    function TransferList() {
+
+        this.update = function(transfers) {
+            // TODO: put transfers in transfers table
+        };
+
+        this.reset = function() {
+            // TODO: this.element.style.visibility = "hidden";
+        };
+    }
+
+    // Element that control the from used to create a new transfer
+    function NewTransfer() {
+
+        this.reset = function() {
+            // TODO: this.element.style.visibility = "hidden";
+        };
+    }
+
+    // Element that control the flow 0of the entire page
     function PageOrchestrator() {
 
         this.start = function () {
+
+            // Initialize and show user id message in title
+            userMessage = new UserMessage(sessionStorage.getItem("userId"), document.getElementById("user_id"));
+            userMessage.show();
+
+            // Initialize account list component
             accountList = new AccountList(
                 document.getElementById("accountEmpty"),
                 document.getElementById("accountContainer"),
                 document.getElementById("accountBody")
             );
+
+            // Initialize outgoing list component
+            outgoingList = new TransferList();
+
+            // Initialize incoming list component
+            incomingList = new TransferList();
+
+            // Initialize new transfer form component 
+            newTransfer = new NewTransfer();
+
+            accountDetails = new AccountDetails();
+            // Initialize transfers lists component
+            accountStatus = new AccountStatus({
+                accountDetails: accountDetails,
+                accountDetailsError: document.getElementById("accountDetailsError"),
+                outgoingTransfers: outgoingList,
+                outgoingMessage: document.getElementById("outgoingTransfersError"),
+                incomingTransfers: incomingList,
+                incomingMessage: document.getElementById("incomingTransfersError"),
+                transferForm: document.getElementById("transferForm")
+            });
+
         };
 
-        this.refresh = function () {
-
+        this.refresh = function (currentAccount) {
+            accountList.reset();
+            accountStatus.reset();
+            accountList.show(function () {
+                accountList.autoclick(currentAccount);
+            });
         };
     }
 
