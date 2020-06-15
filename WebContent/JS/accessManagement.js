@@ -14,7 +14,7 @@
                         let errorElements
                         switch (request.status) {
                             case 200:
-                                sessionStorage.setItem('id', message);
+                                sessionStorage.setItem('userId', message);
                                 window.location.href = "home.html";
                                 break;
                             case 400: // Bad request
@@ -86,7 +86,6 @@
         } else {
             pwd1.style.borderColor = '#cccccc';
             pwd2.style.borderColor = '#cccccc';
-            let signUpButton = document.getElementById('signUpButton');
 
             // Get sign up form
             let form = e.target.closest("form");
@@ -133,12 +132,6 @@
                                             });
                                             break;
                                         case "Username can't be empty":
-                                            document.getElementById("unErrorMessage").textContent = message;
-                                            errorElements = document.getElementsByClassName("unErrorMessage");
-                                            errorElements.forEach(function (item) {
-                                                item.style.display = 'block';
-                                            });
-                                            break;
                                         case "Username already in use, choose another one":
                                             document.getElementById("unErrorMessage").textContent = message;
                                             errorElements = document.getElementsByClassName("unErrorMessage");
@@ -147,19 +140,7 @@
                                             });
                                             break;
                                         case "Email can't be empty":
-                                            document.getElementById("emErrorMessage").textContent = message;
-                                            errorElements = document.getElementsByClassName("emErrorMessage");
-                                            errorElements.forEach(function (item) {
-                                                item.style.display = 'block';
-                                            });
-                                            break;
                                         case "Email not valid":
-                                            document.getElementById("emErrorMessage").textContent = message;
-                                            errorElements = document.getElementsByClassName("emErrorMessage");
-                                            errorElements.forEach(function (item) {
-                                                item.style.display = 'block';
-                                            });
-                                            break;
                                         case "Email already associated to another account, try another email":
                                             document.getElementById("emErrorMessage").textContent = message;
                                             errorElements = document.getElementsByClassName("emErrorMessage");
@@ -175,12 +156,6 @@
                                             });
                                             break;
                                         case "Second password can't be empty":
-                                            document.getElementById("spwErrorMessage").textContent = message;
-                                            errorElements = document.getElementsByClassName("spwErrorMessage");
-                                            errorElements.forEach(function (item) {
-                                                item.style.display = 'block';
-                                            });
-                                            break;
                                         case "Passwords must be equals":
                                             document.getElementById("spwErrorMessage").textContent = message;
                                             errorElements = document.getElementsByClassName("spwErrorMessage");
