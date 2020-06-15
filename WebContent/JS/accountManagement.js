@@ -1,7 +1,7 @@
 (function () {
 
     // Page components
-    var accountList, pageOrchestrator = new PageOrchestrator();
+    var accountList, outgoingList, incomingList, newTransfer, pageOrchestrator = new PageOrchestrator();
 
     // Event on window load
     window.addEventListener('load', () => {
@@ -10,7 +10,7 @@
     }, false);
 
     // Constructors of view components
-    function MissionList(_error, _listContainer, _listBody ) {
+    function AccountList(_error, _listContainer, _listBody ) {
 
         this.error = _error;
         this.listContainer = _listContainer;
@@ -32,7 +32,7 @@
         };
 
         this.update = function () {
-
+            // TODO: fill with received json values
         };
 
         this.reset = function () {
@@ -43,7 +43,11 @@
     function PageOrchestrator() {
 
         this.start = function () {
-
+            accountList = new AccountList(
+                document.getElementById("accountEmpty"),
+                document.getElementById("accountContainer"),
+                document.getElementById("accountBody")
+            );
         };
 
         this.refresh = function () {
