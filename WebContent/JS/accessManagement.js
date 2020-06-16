@@ -74,12 +74,13 @@
 
     });
 
-    document.getElementById("signUpButton").addEventListener('click', (e)=>{
+    document.getElementById("signUpButton").addEventListener('click', (e)=> {
 
         let pwd1 = document.getElementById('sign-up-password1');
         let pwd2 = document.getElementById('sign-up-password2');
 
-        if (pwd1.value !== pwd2.value) {
+        if (pwd1.value==null || pwd2.value==null || pwd1.value==="" || pwd2.value==="" || pwd1.value !== pwd2.value) {
+
             pwd1.style.borderColor = '#ff0000';
             pwd2.style.borderColor = '#ff0000';
 
@@ -90,18 +91,17 @@
             // Get sign up form
             let form = e.target.closest("form");
 
-            if (form.checkValidity()){ // If the form is valid, makeCall
+            if (form.checkValidity()) { // If the form is valid, makeCall
                 makeCall("POST", 'CreateUser', e.target.closest("form"),
                     function(request) {
 
                         if (request.readyState === XMLHttpRequest.DONE) {
                             // Reset errors
                             let errorElements;
-                            errorElements = document.getElementsByClassName("error");
-                            errorElements.forEach(function (item) {
-                                item.style.display = 'none';
-                            });
-
+                            /*errorElements = document.getElementsByClassName("error");
+                            errorElements.forEach(function (element) {
+                                element.style.display = 'none';
+                            });*/
                             let message = request.responseText;
                             switch (request.status) {
                                 case 200:
@@ -176,7 +176,7 @@
                         }
 
                     }
-                );
+                , false);
             } else {
                 form.reportValidity();
             }

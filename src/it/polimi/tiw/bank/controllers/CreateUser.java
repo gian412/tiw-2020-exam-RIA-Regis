@@ -7,7 +7,6 @@ import it.polimi.tiw.bank.utils.Email;
 import it.polimi.tiw.bank.utils.Encryption;
 import org.apache.commons.lang.StringEscapeUtils;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;

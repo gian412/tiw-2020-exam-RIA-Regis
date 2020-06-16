@@ -1,7 +1,7 @@
 (function () {
 
     // Page components
-    let userMessage, accountList, accountStatus, accountDetails, outgoingList, incomingList, pageOrchestrator = new PageOrchestrator(); // TODO: transfer form separato
+    let userMessage, accountList, accountStatus, accountDetails, outgoingList, incomingList, transferSuccessful, transferError, /*logoutButton, */autoClickAfterSuccess = false, pageOrchestrator = new PageOrchestrator();
 
     // Event on window load
     window.addEventListener('load', () => {
@@ -25,10 +25,10 @@
         this.listBody = _listBody;
 
         this.show = function (next) {
-            var that =  this;
+            let that =  this;
             makeCall("GET", "GetAccounts", null, function (request) {
                 if (request.readyState === 4) {
-                    var message = request.responseText;
+                    let message = request.responseText;
                     if (request.status === 200) { // Ok
                         that.update(JSON.parse(message)) // Update view with accounts
                         if (next) next();
@@ -104,19 +104,53 @@
         this.incomingMessage = options['incomingMessage'];
         this.transferForm = options['transferForm'];
         this.transferFormError = options['transferFormError'];
+        this.transferSuccess = options['transferSuccess'];
+        this.transferError = options['transferError'];
 
         this.registerEvent = function(orchestrator) {
             this.transferForm.querySelector("input[type='button']").addEventListener('click', (e) => {
                 let form = e.target.closest("form");
                 if (form.checkValidity()) {
-                    var that = this, originAccount = form.querySelector("input[type='hidden']").value;
+                    let that = this, originAccount = form.querySelector("input[type='hidden']").value;
                     makeCall("POST", "MakeTransfer", form, function (request) {
                         if (request.readyState === XMLHttpRequest.DONE) {
-                            var message = request.responseText;
-                            if (request.status === 200) { // Ok
-                                orchestrator.refresh(originAccount);
-                            } else {
-                                that.transferFormError.textContent = message; // TODO: divide in different error
+                            let message = request.responseText;
+                            switch (request.status) {
+                                case 200: // Ok
+                                    that.transferSuccess.update(message); // TODO: transferSuccessful
+                                    autoClickAfterSuccess = true;
+                                    that.transferForm.style.visibility = "hidden";
+                                    orchestrator.refresh(originAccount);
+                                    break;
+                                case 400:
+                                    switch (message) {
+                                        case "Parameters can't be empty":
+                                        case "Origin Account ID can't be empty":
+                                        case "Origin Account ID must be an integer":
+                                        case "Destination User ID can't be empty":
+                                        case "Destination User ID must be an integer":
+                                        case "Destination Account ID can't be empty":
+                                        case "Destination Account ID must be an integer":
+                                        case "Causal can't be empty":
+                                        case "Causal can't be greater than 1024 characters":
+                                        case "Amount can't be empty":
+                                        case "Amount must be a double":
+                                        case "Amount must be greater than 0":
+                                            that.transferFormError.textContent = message;
+                                            break;
+                                        default :
+                                            that.transferError.update(message);// TODO: transferError
+                                            that.transferForm.style.visibility = "hidden";
+                                            break;
+                                    }
+                                    break;
+                                case 401:
+                                    that.transferError.update(message);// TODO: transferError
+                                    that.transferForm.style.visibility = "hidden";
+                                    break;
+                                case 500:
+                                    that.transferFormError.textContent = message;
+                                    break;
                             }
                         }
                     });
@@ -147,13 +181,7 @@
                         let message = request.responseText;
                         if (request.status === 200) { // Ok
                             let transfers = JSON.parse(message);
-                            that.incomingTransfers.update(
-                                transfers,
-                                document.getElementById("outgoingTransfersError"),
-                                document.getElementById("outgoingContainer"),
-                                document.getElementById("outgoingBody"),
-                                true
-                            );
+                            that.outgoingTransfers.update(transfers);
                         } else { // Bad request, Unauthorized and InternalServerError
                             that.outgoingMessage.textContent = message;
                         }
@@ -166,13 +194,7 @@
                         let message = request.responseText;
                         if (request.status === 200) { // Ok
                             let transfers = JSON.parse(message);
-                            that.incomingTransfers.update(
-                                transfers,
-                                document.getElementById("incomingTransfersError"),
-                                document.getElementById("incomingContainer"),
-                                document.getElementById("incomingBody"),
-                                false
-                            );
+                            that.incomingTransfers.update(transfers);
                         } else { // Bad request, Unauthorized and InternalServerError
                             that.incomingMessage.textContent = message;
                         }
@@ -181,8 +203,13 @@
             );
             this.transferForm.reset();
             this.transferFormError.textContent = "";
-
-            this.transferForm.style.visibility = "visible";
+            this.transferError.reset();
+            if (!autoClickAfterSuccess) {
+                this.transferForm.style.visibility = "visible";
+                this.transferSuccess.reset();
+            } else {
+                autoClickAfterSuccess = !autoClickAfterSuccess;
+            }
         };
 
         this.reset = function() {
@@ -202,72 +229,80 @@
             this.incomingTransfers.update();
             this.transferForm.reset();
             this.transferForm.style.visibility = "visible";
+            this.transferSuccess.reset();
+            this.transferError.reset();
         };
     }
 
     // Element that controls account details' table
-    function AccountDetails() {
+    function AccountDetails(_accountDetailsId, _accountDetailsBalance, _accountDetailsContainer) {
+
+        this.accountId = _accountDetailsId;
+        this.accountDetailsBalance = _accountDetailsBalance;
+        this.accountDetailsContainer = _accountDetailsContainer;
         
         this.update = function(account) {
-            let accountid = document.getElementById("accountDetailId");
-            accountid.textContent = account.id;
-            let accountBalance = document.getElementById("accountDetailBalance");
-            accountBalance.textContent = account.balance;
-            let accountDetailsContainer = document.getElementById("accountDetailsContainer");
-            accountDetailsContainer.style.visibility = "visible";
+            this.accountId.textContent = account.id;
+            this.accountDetailsBalance.textContent = account.balance;
+            this.accountDetailsContainer.style.visibility = "visible";
             // Set origin account in the form
             let hiddenOrigin = document.getElementById("originAccountId");
             hiddenOrigin.setAttribute("value", account.id);
         };
 
         this.reset = function() {
-            let container = document.getElementById("accountDetailsContainer");
-            container.style.visibility = "hidden";
+            this.accountDetailsContainer.style.visibility = "hidden";
         };
 
     }
 
     // Element that control the outgoing transfer's list
-    function TransferList() {
+    function TransferList(_transferContainer, _transferBody, _error, _outgoing) {
 
-        this.update = function(arrayTransfers, error, transferContainer, transfersBody, outgoing) {
-            let length = arrayTransfers.length, body = transfersBody, row, causalCell, amountCell, dateCell, otherAccountCell;
-            transfersBody.innerHTML = ""; // Empty table body
-            error.textContent = "";
+        this.transfersContainer = _transferContainer;
+        this.transfersBody = _transferBody;
+        this.error = _error;
+        this.outgoing = _outgoing;
+
+        this.update = function(arrayTransfers) {
+            let length = arrayTransfers.length, row, causalCell, amountCell, dateCell, otherAccountCell;
+            this.transfersBody.innerHTML = ""; // Empty table body
+            this.error.textContent = "";
             if (length === 0) {
-               if (outgoing) {
-                   error.textContent = "No outgoing transfer yet";
+               if (this.outgoing) {
+                   this.error.textContent = "No outgoing transfer yet";
                } else {
-                   error.textContent = "No incoming transfer yet";
+                   this.error.textContent = "No incoming transfer yet";
                }
            } else {
+                let that = this;
                arrayTransfers.forEach(function (transfer) {
                    // Create row
                    row = document.createElement("tr");
 
                    causalCell = document.createElement("td"); // Create Causal cell
                    causalCell.textContent = transfer.causal; // Fill Causal cell
-                   causalCell.setAttribute("class", (outgoing) ? "outgoing" : "incoming");
+                   causalCell.setAttribute("class", (that.outgoing) ? "outgoing" : "incoming");
                    row.appendChild(causalCell); // Append Causal cell to row
 
                    amountCell = document.createElement("td"); // Create Amount cell
                    amountCell.textContent = transfer.amount; // Fill Amount cell
-                   amountCell.setAttribute("class", (outgoing) ? "outgoing" : "incoming");
+                   amountCell.setAttribute("class", (that.outgoing) ? "outgoing" : "incoming");
                    row.appendChild(amountCell); // Append Amount cell to row
 
                    dateCell = document.createElement("td"); // Create Date cell
                    dateCell.textContent = transfer.date; // Fill Date cell
-                   dateCell.setAttribute("class", (outgoing) ? "outgoing" : "incoming");
+                   dateCell.setAttribute("class", (that.outgoing) ? "outgoing" : "incoming");
                    row.appendChild(dateCell); // Append Date cell to row
 
                    otherAccountCell = document.createElement("td"); // Create Origin/Destination Account cell
-                   otherAccountCell.textContent = (outgoing) ? transfer.destinationAccount : transfer.originAccount; // Fill Origin/Destination Account cell
-                   otherAccountCell.setAttribute("class", (outgoing) ? "outgoing" : "incoming");
+                   otherAccountCell.textContent = (that.outgoing) ? transfer.destinationAccount : transfer.originAccount; // Fill Origin/Destination Account cell
+                   otherAccountCell.setAttribute("class", (that.outgoing) ? "outgoing" : "incoming");
                    row.appendChild(otherAccountCell); // Append Origin/Destination Account to row
 
-                   body.appendChild(row);
+                   that.transfersBody.appendChild(row);
                });
-               transferContainer.style.visibility = "visible";
+               that.transfersContainer.style.visibility = "visible";
            }
         };
 
@@ -281,6 +316,43 @@
             container.style.visibility = "hidden";
         };
     }
+
+    function TransferSuccessful(_successMessage) {
+
+        this.successMessage = _successMessage;
+
+        this.update = function(message) {
+            this.successMessage.textContent = message;
+        };
+
+        this.reset = function () {
+            this.successMessage.textContent = "";
+        };
+
+    }
+
+    function TransferError(_errorMessage) {
+
+        this.errorMessage = _errorMessage;
+
+        this.update = function (message) {
+            this.errorMessage.textContent = message;
+        };
+
+        this.reset = function () {
+            this.errorMessage.textContent = "";
+        };
+    }
+
+    /*function LogoutButton(_logoutButton) {
+
+        this.logoutButton = _logoutButton;
+        this.registerEvents = function () {
+            this.logoutButton.addEventListener('click', () => {
+                makeCall()
+            } );
+        };
+    }*/
 
     // Element that control the flow 0of the entire page
     function PageOrchestrator() {
@@ -298,14 +370,42 @@
                 document.getElementById("accountBody")
             );
 
+
+
             // Initialize outgoing list component
-            outgoingList = new TransferList();
+            outgoingList = new TransferList(
+                document.getElementById("outgoingContainer"),
+                document.getElementById("outgoingBody"),
+                document.getElementById("outgoingTransfersError"),
+                true
+            );
 
             // Initialize incoming list component
-            incomingList = new TransferList();
+            incomingList = new TransferList(
+                document.getElementById("incomingContainer"),
+                document.getElementById("incomingBody"),
+                document.getElementById("incomingTransfersError"),
+                false
+            );
+
+            // Initialize transfer successful component
+            transferSuccessful = new TransferSuccessful(document.getElementById("transferSuccessfulMessage"));
+
+            // Initialize transfer error component
+            transferError = new TransferError(document.getElementById("transferErrorMessage"));
 
             // Initialize new transfer form component
-            accountDetails = new AccountDetails();
+            accountDetails = new AccountDetails(
+                document.getElementById("accountDetailsId"),
+                document.getElementById("accountDetailsBalance"),
+                document.getElementById("accountDetailsContainer")
+            );
+
+            // Initialize logout component
+            /*logoutButton = new LogoutButton(document.getElementById("logout"));
+
+            // Register event for logout component
+            logoutButton.registerEvents();*/
 
             // Initialize transfers lists component
             accountStatus = new AccountStatus({
@@ -316,10 +416,12 @@
                 incomingTransfers: incomingList,
                 incomingMessage: document.getElementById("incomingTransfersError"),
                 transferForm: document.getElementById("transferForm"),
-                transferFormError: document.getElementById("transferFormError")
+                transferFormError: document.getElementById("transferFormError"),
+                transferSuccess: transferSuccessful,
+                transferError: transferError
             });
 
-            // Register Form events
+            // Register event for form component
             accountStatus.registerEvent(this);
 
         };

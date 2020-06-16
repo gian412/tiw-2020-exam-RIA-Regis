@@ -26,7 +26,7 @@ public class Logout extends HttpServlet {
         }
 
         String path;
-        path = getServletContext().getContextPath() + "/Welcome";
+        path = getServletContext().getContextPath() + "/welcome.html";
         resp.sendRedirect(path);
 
     }

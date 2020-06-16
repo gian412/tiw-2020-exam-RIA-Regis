@@ -42,7 +42,6 @@
     <!-- Filters mapping -->
     <filter-mapping>
         <filter-name>CheckLogin</filter-name>
-        <url-pattern>/CreateUser</url-pattern>
         <url-pattern>/AccountDetails</url-pattern>
         <url-pattern>/GetAccounts</url-pattern>
         <url-pattern>/IncomingTransfers</url-pattern>

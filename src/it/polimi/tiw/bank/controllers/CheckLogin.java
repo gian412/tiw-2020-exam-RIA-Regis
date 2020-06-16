@@ -37,7 +37,7 @@ public class CheckLogin extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         
-        String username, password, usernameToHash = null, passwordToHash = null;
+        String username, password, usernameToHash, passwordToHash;
         
         try { // Get username and password from the request
             usernameToHash = StringEscapeUtils.escapeJava(req.getParameter("username"));
