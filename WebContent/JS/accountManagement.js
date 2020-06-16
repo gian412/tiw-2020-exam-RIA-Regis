@@ -180,6 +180,8 @@
                 }
             );
             this.transferForm.reset();
+            this.transferFormError.textContent = "";
+
             this.transferForm.style.visibility = "visible";
         };
 
@@ -213,6 +215,9 @@
             accountBalance.textContent = account.balance;
             let accountDetailsContainer = document.getElementById("accountDetailsContainer");
             accountDetailsContainer.style.visibility = "visible";
+            // Set origin account in the form
+            let hiddenOrigin = document.getElementById("originAccountId");
+            hiddenOrigin.setAttribute("value", account.id);
         };
 
         this.reset = function() {
