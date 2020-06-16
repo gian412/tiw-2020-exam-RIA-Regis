@@ -1,7 +1,7 @@
 (function () {
 
     // Page components
-    let userMessage, accountList, accountStatus, accountDetails, outgoingList, incomingList, transferSuccessful, transferError, /*logoutButton, */autoClickAfterSuccess = false, pageOrchestrator = new PageOrchestrator();
+    let userMessage, accountList, accountStatus, accountDetails, outgoingList, incomingList, transferSuccessful, transferError, dropDownMenu, autoClickAfterSuccess = false, pageOrchestrator = new PageOrchestrator();
 
     // Event on window load
     window.addEventListener('load', () => {
@@ -120,6 +120,7 @@
                                     that.transferSuccess.update(message); // TODO: transferSuccessful
                                     autoClickAfterSuccess = true;
                                     that.transferForm.style.visibility = "hidden";
+                                    dropDownMenu.update();
                                     orchestrator.refresh(originAccount);
                                     break;
                                 case 400:
@@ -344,15 +345,95 @@
         };
     }
 
-    /*function LogoutButton(_logoutButton) {
+    function DropDownMenu(_dropDownBody) {
 
-        this.logoutButton = _logoutButton;
-        this.registerEvents = function () {
-            this.logoutButton.addEventListener('click', () => {
-                makeCall()
-            } );
-        };
-    }*/
+        this.dropDownBody = _dropDownBody;
+
+        this.arrayAddress = [];
+
+        this.update = function() {
+            let that = this;
+            makeCall("GET", "GetAddresses", null, function (request) {
+                if (request.readyState === XMLHttpRequest.DONE) {
+                    let message = request.responseText;
+                    if (request.status === 200) {
+                        let addresses = JSON.parse(request.responseText);
+                        that.arrayAddress = addresses;
+                        that.populate(addresses);
+                    } else {
+                        that.setMessage(message, true);
+                    }
+                }
+            });
+        }
+
+        this.populate = function (arrayAddress) {
+
+            let length = arrayAddress.length, anchor;
+            if (length === 0) {
+                this.setMessage("No address yet", false);
+            } else {
+                this.dropDownBody.innerHTML = "";
+                let that = this
+                arrayAddress.forEach(function (address) {
+                    anchor = document.createElement("a");
+                    anchor.textContent = address.identifier;
+                    anchor.setAttribute("user", address.user);
+                    anchor.setAttribute("account", address.account);
+                    anchor.addEventListener('click', (e) => {
+                        let target, identifier, userId, accountId;
+                        // Get anchor from the event
+                        target = e.target;
+                        // Get elements from html page
+                        identifier = document.getElementById("identifier");
+                        userId = document.getElementById("userId");
+                        accountId = document.getElementById("accountId");
+                        // Fill elements with anchor parameters
+                        identifier.setAttribute("value", target.textContent);
+                        userId.setAttribute("value", target.getAttribute("user"));
+                        accountId.setAttribute("value", target.getAttribute("account"));
+
+                    }, false);
+                    anchor.href = "#";
+                    that.dropDownBody.appendChild(anchor);
+                });
+            }
+
+
+        }
+
+        this.setMessage = function (errorMessage, error) {
+
+            let anchor;
+
+            this.dropDownBody.innerHTML = ""; // Empty the list of addresses
+            anchor = document.createElement("a");
+            anchor.textContent = errorMessage;
+            anchor.href = "#";
+            if (error) {
+                anchor.className = "error";
+            }
+            this.dropDownBody.appendChild(anchor);
+        }
+
+        this.registerEvent = function(_textField) {
+            let textFiled = _textField;
+            let that = this;
+            textFiled.addEventListener('input', (e) => {
+                let string, newArrayAddress = [];
+                string = e.target.value;
+                that.arrayAddress.forEach(function (address) {
+                    if (string===address.identifier.substring(0, string.length)) {
+                        newArrayAddress.push(address);
+                    }
+                });
+                that.populate(newArrayAddress);
+
+
+            });
+        }
+
+    }
 
     // Element that control the flow 0of the entire page
     function PageOrchestrator() {
@@ -362,6 +443,10 @@
             // Initialize and show user id message in title
             userMessage = new UserMessage(sessionStorage.getItem("userId"), document.getElementById("user_id"));
             userMessage.show();
+
+            dropDownMenu = new DropDownMenu(document.getElementById("dropdown-content"));
+
+            dropDownMenu.registerEvent(document.getElementById("identifier"));
 
             // Initialize account list component
             accountList = new AccountList(
@@ -401,12 +486,6 @@
                 document.getElementById("accountDetailsContainer")
             );
 
-            // Initialize logout component
-            /*logoutButton = new LogoutButton(document.getElementById("logout"));
-
-            // Register event for logout component
-            logoutButton.registerEvents();*/
-
             // Initialize transfers lists component
             accountStatus = new AccountStatus({
                 accountDetails: accountDetails,
@@ -432,6 +511,7 @@
             accountList.show(function () {
                 accountList.autoClick(currentAccount);
             });
+            dropDownMenu.update();
         };
     }
 
