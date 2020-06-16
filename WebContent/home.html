@@ -20,74 +20,78 @@
             <h1>Homepage User <span id="user_id"></span></h1>
             <div id="error" class="error"></div>
 
-            <!-- If there is any account, show it -->
-            <table id="accountContainer">
-                <thead>
-                <tr>
-                    <th>Account ID</th>
-                    <th>Balance</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                <tbody id="accountBody">
-                </tbody>
-            </table>
-
-            <!-- If there isn't any account, show message -->
-            <p id="accountEmpty"></p>
-
-
-            <!-- Account details -->
-            <table id="accountDetailsContainer">
-                <thead>
-                <tr>
-                    <th>Account ID</th>
-                    <th>Balance</th>
-                </tr>
-                </thead>
-                <tbody id="accountDetailsBody">
-                <tr>
-                    <td id="accountDetailsId"></td> <!-- TODO: format number -->
-                    <td id="accountDetailsBalance"></td> <!-- TODO: format number and add € -->
-                </tr>
-                </tbody>
-            </table>
-            <p id="accountDetailsError" class="error"></p>
-
-            <div id="transfersDiv">
-                <!-- Outgoing transfers -->
-                <table id="outgoingContainer">
+            <div id="left">
+                <!-- If there is any account, show it -->
+                <table id="accountContainer">
                     <thead>
                     <tr>
-                        <th>Causal</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Destination account</th>
+                        <th>Account ID</th>
+                        <th>Balance</th>
+                        <th>Status</th>
                     </tr>
                     </thead>
-                    <tbody id="outgoingBody">
+                    <tbody id="accountBody">
                     </tbody>
                 </table>
 
-                <!-- No outgoing transfers -->
-                <p id="outgoingTransfersError"></p>
+                <!-- If there isn't any account, show message -->
+                <p id="accountEmpty"></p>
+            </div>
 
-                <!-- Incoming transfers -->
-                <table id="incomingContainer">
+
+            <div id="right">
+                <!-- Account details -->
+                <table id="accountDetailsContainer">
                     <thead>
                     <tr>
-                        <th>Causal</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Origin account</th>
+                        <th>Account ID</th>
+                        <th>Balance</th>
                     </tr>
                     </thead>
-                    <tbody id="incomingBody">
+                    <tbody id="accountDetailsBody">
+                    <tr>
+                        <td id="accountDetailsId"></td> <!-- TODO: format number -->
+                        <td id="accountDetailsBalance"></td> <!-- TODO: format number and add € -->
+                    </tr>
                     </tbody>
                 </table>
+                <p id="accountDetailsError" class="error"></p>
 
-                <!-- No incoming transfers -->
-                <p id="incomingTransfersError"></p>
+                <div id="transfersDiv">
+                    <!-- Outgoing transfers -->
+                    <table id="outgoingContainer">
+                        <thead>
+                        <tr>
+                            <th>Causal</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Destination account</th>
+                        </tr>
+                        </thead>
+                        <tbody id="outgoingBody">
+                        </tbody>
+                    </table>
+
+                    <!-- No outgoing transfers -->
+                    <p id="outgoingTransfersError"></p>
+
+                    <!-- Incoming transfers -->
+                    <table id="incomingContainer">
+                        <thead>
+                        <tr>
+                            <th>Causal</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Origin account</th>
+                        </tr>
+                        </thead>
+                        <tbody id="incomingBody">
+                        </tbody>
+                    </table>
+
+                    <!-- No incoming transfers -->
+                    <p id="incomingTransfersError"></p>
+                </div>
             </div>
 
             <!-- Create a new transfer form -->
@@ -110,6 +114,12 @@
                         <input type="hidden" name="origin" id="originAccountId" required>
 
                         <!-- User ID -->
+                        <label for="identifier">Destination User Identifier: </label>
+                        <div class="dropdown">
+                            <input type="text" id="identifier" class="droptxt" placeholder="Enter destination User Identifier" name="identifier" >
+                            <div id="dropdown-content" class="dropdown-content"></div>
+                        </div> <br>
+
                         <label for="userId">Destination User ID: </label>
                         <input type="number" id="userId" min="1" step="1" placeholder="Enter destination User ID" name="user" required><br>
                         <!-- <p id="userIdError" class="userIdError error">User ID error</p><br class="userIdError error"> -->

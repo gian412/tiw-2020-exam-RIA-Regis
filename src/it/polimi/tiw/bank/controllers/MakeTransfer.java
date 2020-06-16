@@ -1,7 +1,9 @@
 package it.polimi.tiw.bank.controllers;
 
 import it.polimi.tiw.bank.beans.Account;
+import it.polimi.tiw.bank.beans.Address;
 import it.polimi.tiw.bank.beans.User;
+import it.polimi.tiw.bank.dao.AddressDAO;
 import it.polimi.tiw.bank.dao.TransferDAO;
 import it.polimi.tiw.bank.dao.UserDAO;
 import it.polimi.tiw.bank.utils.ClientHandler;
@@ -231,6 +233,27 @@ public class MakeTransfer extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().println("Origin account hasn't enough founds");
             return;
+        }
+        
+        // Add information to address book
+        String identifier = null;
+        try {
+            identifier = StringEscapeUtils.escapeJava(req.getParameter("identifier"));
+        } catch (NullPointerException e) {
+            e.printStackTrace(); // TODO: remove after test
+        }
+        
+        if (identifier!=null && !identifier.isEmpty()) { // If there is the identifier...
+            AddressDAO addressDAO = new AddressDAO(connection, user.getId());
+            Address address;
+            try {
+                address = addressDAO.findAccountByParameters(destinationAccount.getOwner(), destinationAccount.getId());
+                if (address==null) { // ... and if there isn't already the address
+                    addressDAO.createAddress(destinationAccount.getOwner(), destinationAccount.getId(), identifier);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(); // TODO: remove after test
+            }
         }
 
         // Create transaction and update accounts
