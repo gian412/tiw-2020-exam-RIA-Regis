@@ -1,7 +1,7 @@
 (function () {
 
     // Page components
-    var userMessage, accountList, accountStatus, accountDetails, outgoingList, incomingList, newTransfer, pageOrchestrator = new PageOrchestrator();
+    let userMessage, accountList, accountStatus, accountDetails, outgoingList, incomingList, pageOrchestrator = new PageOrchestrator();
 
     // Event on window load
     window.addEventListener('load', () => {
@@ -74,7 +74,7 @@
                     row.appendChild(linkCell); // Add link cell to row
 
                     // Row
-                    self.listBody.appendChild(row); // Add row to table body
+                    that.listBody.appendChild(row); // Add row to table body
                 });
                 this.listContainer.style.visibility = "visible"; // Set div visible
             }
@@ -84,7 +84,7 @@
             this.listContainer.style.visibility = "hidden";
         };
 
-        this.autoclick = function (accountId) {
+        this.autoClick = function (accountId) {
             let e = new Event('click');
             let selector = "a[accountId='" + accountId + "']";
             let anchorToClick = (accountId) ? document.querySelector(selector) : this.listBody.querySelector("a")[0];
@@ -106,7 +106,7 @@
 
         this.registerEvent = function(orchestrator) {
             this.transferForm.querySelector("input[type='button']").addEventListener('click', (e) => {
-                var form = e.target.closest("form");
+                let form = e.target.closest("form");
                 if (form.checkValidity()) {
                     var that = this, originAccount = form.querySelector("input[type='hidden']").value;
                     makeCall("POST", "MakeTransfer", form, function (request) {
@@ -126,16 +126,16 @@
         };
 
         this.show = function(accountId) {
-            var self = this;
+            let that = this;
             makeCall("GET", "AccountDetails?accountId=" + accountId, null, 
                 function(request) {
                     if (request.readyState === XMLHttpRequest.DONE) {
-                        var message = request.responseText;
+                        let message = request.responseText;
                         if (request.status === 200) { // Ok
-                            var account = JSON.parse(message);
-                            self.accountDetails.update(account);
+                            let account = JSON.parse(message);
+                            that.update(account);
                         } else { // BadRequest and InternalServerError
-                            self.accountDetailsError.textContent = message;
+                            that.accountDetailsError.textContent = message;
                         }
                     }
                 }
@@ -143,12 +143,18 @@
             makeCall("GET", "OutgoingTransfers?accountId=" + accountId, null,
                 function(request) {
                     if (request.readyState === XMLHttpRequest.DONE) {
-                        var message = request.responseText;
+                        let message = request.responseText;
                         if (request.status === 200) { // Ok
-                            var transfers = JSON.parse(message);
-                            self.outgoingTransfers.update(transfers);
+                            let transfers = JSON.parse(message);
+                            that.incomingTransfers.update(
+                                transfers,
+                                document.getElementById("outgoingTransfersError"),
+                                document.getElementById("outgoingContainer"),
+                                document.getElementById("outgoingBody"),
+                                true
+                            );
                         } else { // Bad request, Unauthorized and InternalServerError
-                            self.outgoingMessage.textContent = message;
+                            that.outgoingMessage.textContent = message;
                         }
                     }
                 }
@@ -156,12 +162,18 @@
             makeCall("GET", "IncomingTransfers?accountId=" + accountId, null,
                 function(request) {
                     if (request.readyState === XMLHttpRequest.DONE) {
-                        var message = request.responseText;
+                        let message = request.responseText;
                         if (request.status === 200) { // Ok
-                            var transfers = JSON.parse(message);
-                            self.incomingTransfers.update(transfers);
+                            let transfers = JSON.parse(message);
+                            that.incomingTransfers.update(
+                                transfers,
+                                document.getElementById("incomingTransfersError"),
+                                document.getElementById("incomingContainer"),
+                                document.getElementById("incomingBody"),
+                                false
+                            );
                         } else { // Bad request, Unauthorized and InternalServerError
-                            self.incomingMessage.textContent = message;
+                            that.incomingMessage.textContent = message;
                         }
                     }
                 }
@@ -170,9 +182,16 @@
 
         this.reset = function() {
             this.accountDetails.reset();
-            this.outgoingTransfers.reset();
-            this.incomingTransfers.reset();
-            this.newTransferForm.reset();
+            this.outgoingTransfers.reset(true);
+            this.incomingTransfers.reset(false);
+            this.transferForm.style.visibility = "hidden";
+        };
+
+        this.update = function(account) {
+            this.accountDetails.update(account);
+            this.outgoingTransfers.update();
+            this.incomingTransfers.update();
+            this.transferForm.reset();
         };
     }
 
@@ -180,11 +199,15 @@
     function AccountDetails() {
         
         this.update = function(account) {
-            // TODO: put account in account details table
+            let accountId = document.getElementById("accountDetailId");
+            accountId.textContent = account.id;
+            let accountBalance = document.getElementById("accountDetailBalance");
+            accountBalance.textContent = account.balance;
         };
 
         this.reset = function() {
-            // TODO: this.element.style.visibility = "hidden";
+            let container = document.getElementById("accountDetailContainer");
+            container.style.visibility = "hidden";
         };
 
     }
@@ -192,20 +215,50 @@
     // Element that control the outgoing transfer's list
     function TransferList() {
 
-        this.update = function(transfers) {
-            // TODO: put transfers in transfers table
+        this.update = function(arrayTransfers, error, transferContainer, transfersBody, outgoing) {
+            let length = arrayTransfers.length, body = transfersBody, row, causalCell, amountCell, dateCell, otherAccountCell;
+            if (length === 0) {
+               if (outgoing) {
+                   error.textContent = "No outgoing transfer yet";
+               } else {
+                   error.textContent = "No incoming transfer yet";
+               }
+           } else {
+               transfersBody.innerHTML = ""; // Empty table body
+               arrayTransfers.forEach(function (transfer) {
+                   // Create row
+                   row = document.createElement("tr");
+
+                   causalCell = document.createElement("td"); // Create Causal cell
+                   causalCell.textContent = transfer.causal; // Fill Causal cell
+                   row.appendChild(causalCell); // Append Causal cell to row
+
+                   amountCell = document.createElement("td"); // Create Amount cell
+                   amountCell.textContent = transfer.amount; // Fill Amount cell
+                   row.appendChild(amountCell); // Append Amount cell to row
+
+                   dateCell = document.createElement("td"); // Create Date cell
+                   dateCell.textContent = transfer.date; // Fill Date cell
+                   row.appendChild(dateCell); // Append Date cell to row
+
+                   otherAccountCell = document.createElement("td"); // Create Origin/Destination Account cell
+                   otherAccountCell.textContent = (outgoing) ? transfer.destinationAccount : transfer.originAccount; // Fill Origin/Destination Account cell
+                   row.appendChild(otherAccountCell); // Append Origin/Destination Account to row
+
+                   body.appendChild(row);
+               });
+               transferContainer.style.visibility = "visible";
+           }
         };
 
-        this.reset = function() {
-            // TODO: this.element.style.visibility = "hidden";
-        };
-    }
-
-    // Element that control the from used to create a new transfer
-    function NewTransfer() {
-
-        this.reset = function() {
-            // TODO: this.element.style.visibility = "hidden";
+        this.reset = function(outgoing) {
+            let container
+            if (outgoing) {
+                container = document.getElementById("outgoingContainer");
+            } else {
+                container = document.getElementById("incomingContainer");
+            }
+            container.style.visibility = "hidden";
         };
     }
 
@@ -231,10 +284,9 @@
             // Initialize incoming list component
             incomingList = new TransferList();
 
-            // Initialize new transfer form component 
-            newTransfer = new NewTransfer();
-
+            // Initialize new transfer form component
             accountDetails = new AccountDetails();
+
             // Initialize transfers lists component
             accountStatus = new AccountStatus({
                 accountDetails: accountDetails,
@@ -243,8 +295,12 @@
                 outgoingMessage: document.getElementById("outgoingTransfersError"),
                 incomingTransfers: incomingList,
                 incomingMessage: document.getElementById("incomingTransfersError"),
-                transferForm: document.getElementById("transferForm")
+                transferForm: document.getElementById("transferForm"),
+                transferFormError: document.getElementById("transferFormError")
             });
+
+            // Register Form events
+            accountStatus.registerEvent(this);
 
         };
 
@@ -252,7 +308,7 @@
             accountList.reset();
             accountStatus.reset();
             accountList.show(function () {
-                accountList.autoclick(currentAccount);
+                accountList.autoClick(currentAccount);
             });
         };
     }
