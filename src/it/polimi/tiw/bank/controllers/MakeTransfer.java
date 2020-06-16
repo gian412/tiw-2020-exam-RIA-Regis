@@ -60,7 +60,7 @@ public class MakeTransfer extends HttpServlet {
 
            // Reply with error message
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().println("Username and password cannot be empty");
+            resp.getWriter().println("Parameters can't be empty");
             return;
         }
 
@@ -153,7 +153,7 @@ public class MakeTransfer extends HttpServlet {
         if (causal.length()>1024) {
             // Reply with error message
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().println("Causal can't greater than 1024 characters");
+            resp.getWriter().println("Causal can't be greater than 1024 characters");
             return;
         }
 
@@ -247,7 +247,7 @@ public class MakeTransfer extends HttpServlet {
         }
     
         resp.setStatus(HttpServletResponse.SC_OK);
-        resp.getWriter().println("OK");
+        resp.getWriter().println("Transfer successful!");
 
     }
 

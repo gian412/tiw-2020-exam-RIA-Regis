@@ -7,11 +7,12 @@ button, input[type=submit], input[type=button], .file-upload, .top-menu a {
     border: none;
     cursor: pointer;
     border-radius: 20px;
+    text-decoration: none;
 }
 
 /* Buttons and submit field hover style */
-button:hover, input[type=submit]:hover, input[type=button]:hover, .file-upload:hover,
-button:focus, input[type=submit]:focus, input[type=button]:focus, .file-upload:focus {
+button:hover, input[type=submit]:hover, input[type=button]:hover, .file-upload:hover, .top-menu a :hover,
+button:focus, input[type=submit]:focus, input[type=button]:focus, .file-upload:focus, .top-menu a:focus {
     background-color: #c49991;
     color: #44ccff;
 }
@@ -37,6 +38,11 @@ div {
     padding: 16px;
 }
 
+/* Success message style */
+.success {
+    color: green;
+}
+
 /* Error messages style */
 .error {
     color: red;
@@ -53,7 +59,8 @@ div {
     position : fixed;
     top : 0;
     width : 100%;
-    padding: 0;
+    height: 20px;
+    padding: 22px 22px 22px 2px;
     text-align: right;
 }
 
