@@ -43,8 +43,6 @@
     <filter-mapping>
         <filter-name>CheckLogin</filter-name>
         <url-pattern>/Home</url-pattern>
-        <url-pattern>/AccountStatus</url-pattern>
-        <url-pattern>/MakeTransfer</url-pattern>
     </filter-mapping>
 
 </web-app>
