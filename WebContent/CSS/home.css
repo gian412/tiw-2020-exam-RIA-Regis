@@ -17,3 +17,20 @@ a:hover {
 td {
     padding: 10px;
 }
+
+/* Account status */
+.outgoing {
+    background-color: #ff6d78;
+}
+
+.incoming {
+    background-color: #88ff79;
+}
+
+.transfers {
+    padding: 0;
+}
+
+table {
+    display: inline-table;
+}
