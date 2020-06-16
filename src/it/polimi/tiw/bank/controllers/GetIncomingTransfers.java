@@ -20,7 +20,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet("IncomingTransfers")
+@WebServlet("/IncomingTransfers")
 public class GetIncomingTransfers extends HttpServlet {
 	
 	private static final double serialVersionUID = 1L;
