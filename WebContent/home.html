@@ -17,127 +17,121 @@
 
         </div>
 
-        <div class="main">
+        <h1>Homepage User <span id="user_id"></span></h1>
+        <div id="error" class="error"></div>
 
-            <h1>Homepage User <span id="user_id"></span></h1>
-            <div id="error" class="error"></div>
+        <!-- If there is any account, show it -->
+        <table id="accountContainer">
+            <thead>
+                <tr>
+                    <th>Account ID</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="accountBody">
+            </tbody>
+        </table>
 
-            <!-- If there is any account, show it -->
-            <table id="accountContainer">
+        <!-- If there isn't any account, show message -->
+        <p id="accountEmpty"></p>
+
+
+        <!-- Account details -->
+        <table id="accountDetailsContainer">
+            <thead>
+            <tr>
+                <th>Account ID</th>
+                <th>Balance</th>
+            </tr>
+            </thead>
+            <tbody id="accountDetailBody">
+            <tr>
+                <td id="accountDetailId"></td> <!-- TODO: format number -->
+                <td id="accountDetailBalance"></td> <!-- TODO: format number and add € -->
+            </tr>
+            </tbody>
+        </table>
+        <p id="accountDetailsError" class="error"></p>
+
+        <div id="transfersDiv">
+            <!-- Outgoing transfers -->
+            <table id="outgoingContainer">
                 <thead>
-                    <tr>
-                        <th>Account ID</th>
-                        <th>Balance</th>
-                        <th>Status</th>
-                    </tr>
+                <tr>
+                    <th>Causal</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Destination account</th>
+                </tr>
                 </thead>
-                <tbody id="accountBody">
+                <tbody id="outgoingBody">
                 </tbody>
             </table>
 
-            <!-- If there isn't any account, show message -->
-            <p id="accountEmpty"></p>
+            <!-- No outgoing transfers -->
+            <p id="outgoingTransfersError"></p>
 
-            <div class="accountDetailContainer">
+            <!-- Incoming transfers -->
+            <table id="incomingContainer">
+                <thead>
+                <tr>
+                    <th>Causal</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Origin account</th>
+                </tr>
+                </thead>
+                <tbody id="incomingBody">
+                </tbody>
+            </table>
 
-                <!-- Account details -->
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Account ID</th>
-                        <th>Balance</th>
-                    </tr>
-                    </thead>
-                    <tbody id="accountDetailContainer">
-                    <tr>
-                        <td id="accountDetailId"></td> <!-- TODO: format number -->
-                        <td id="accountDetailBalance"></td> <!-- TODO: format number and add € -->
-                    </tr>
-                    </tbody>
-                </table>
-                <p id="accountDetailsError" class="error"></p>
+            <!-- No incoming transfers -->
+            <p id="incomingTransfersError"></p>
+        </div>
 
-                <!-- Outgoing transfers -->
-                <table id="outgoingContainer">
-                    <thead>
-                        <tr>
-                            <th>Causal</th>
-                            <th>Amount</th>
-                            <th>Date</th>
-                            <th>Destination account</th>
-                        </tr>
-                    </thead>
-                    <tbody id="outgoingBody">
-                    </tbody>
-                </table>
-
-                <!-- No outgoing transfers -->
-                <p id="outgoingTransfersError"></p>
-
-                <!-- Incoming transfers -->
-                <table id="incomingContainer">
-                    <thead>
-                        <tr>
-                            <th>Causal</th>
-                            <th>Amount</th>
-                            <th>Date</th>
-                            <th>Origin account</th>
-                        </tr>
-                    </thead>
-                    <tbody id="incomingBody">
-                    </tbody>
-                </table>
-
-                <!-- No incoming transfers -->
-                <p id="incomingTransfersError"></p>
-
-            </div>
-
-            <!-- Create a new transfer form -->
-            <div class="newTransfer">
+        <!-- Create a new transfer form -->
+        <div class="newTransfer">
 
 
 
-                <form id="transferForm" action="#">
+            <form id="transferForm" action="#">
 
-                    <fieldset>
-                        <legend>Make a new transfer</legend>
-                    <!-- <p id="errorMessage" class="errorMessage error">General error</p><br class="errorMessage error"> -->
+                <fieldset>
+                    <legend>Make a new transfer</legend>
+                <!-- <p id="errorMessage" class="errorMessage error">General error</p><br class="errorMessage error"> -->
 
-                    <!-- Hidden originAccount -->
-                    <input type="hidden" name="origin" id="originAccountId" required>
+                <!-- Hidden originAccount -->
+                <input type="hidden" name="origin" id="originAccountId" required>
 
-                    <!-- User ID -->
-                    <label for="userId">Destination User ID: </label>
-                    <input type="number" id="userId" min="1" step="1" placeholder="Enter destination User ID" name="user" required><br>
-                    <!-- <p id="userIdError" class="userIdError error">User ID error</p><br class="userIdError error"> -->
+                <!-- User ID -->
+                <label for="userId">Destination User ID: </label>
+                <input type="number" id="userId" min="1" step="1" placeholder="Enter destination User ID" name="user" required><br>
+                <!-- <p id="userIdError" class="userIdError error">User ID error</p><br class="userIdError error"> -->
 
-                    <!-- Account ID -->
-                    <label for="accountId">Destination Account ID: </label>
-                    <input type="number" id="accountId" min="1" step="1" placeholder="Enter destination Account ID" name="account" required><br>
-                    <!-- <p class="destinationAccountErrorMessage error">Destination Account error</p><br class="destinationAccountErrorMessage error"> -->
+                <!-- Account ID -->
+                <label for="accountId">Destination Account ID: </label>
+                <input type="number" id="accountId" min="1" step="1" placeholder="Enter destination Account ID" name="account" required><br>
+                <!-- <p class="destinationAccountErrorMessage error">Destination Account error</p><br class="destinationAccountErrorMessage error"> -->
 
-                    <!-- Causal -->
-                    <label for="causal">Causal: </label>
-                    <input type="text" id="causal" placeholder="Enter transfer causal" name="causal" required><br>
-                    <!-- <p id="causalErrorMessage" class="causalErrorMessage error">Causal error</p><br class="causalErrorMessage error"> -->
+                <!-- Causal -->
+                <label for="causal">Causal: </label>
+                <input type="text" id="causal" placeholder="Enter transfer causal" name="causal" required><br>
+                <!-- <p id="causalErrorMessage" class="causalErrorMessage error">Causal error</p><br class="causalErrorMessage error"> -->
 
-                    <!-- Amount -->
-                    <label for="amount">Amount: </label>
-                    <input type="number" id="amount" value="0" min="0.01" step="0.01" name="amount" required><br>
-                    <!-- <p id="amountErrorMessage" class="amountErrorMessage error">Amount error</p><br class="amountErrorMessage error"> -->
-                    <p id="transferFormError" class="error"></p>
+                <!-- Amount -->
+                <label for="amount">Amount: </label>
+                <input type="number" id="amount" value="0" min="0.01" step="0.01" name="amount" required><br>
+                <!-- <p id="amountErrorMessage" class="amountErrorMessage error">Amount error</p><br class="amountErrorMessage error"> -->
+                <p id="transferFormError" class="error"></p>
 
-                    <!-- Submit button -->
-                    <input type="button" value="Make transfer">
+                <!-- Submit button -->
+                <input type="button" value="Make transfer">
 
-                    </fieldset>
-                </form>
-
-            </div>
-
-
+                </fieldset>
+            </form>
 
         </div>
+
     </body>
 </html>

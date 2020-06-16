@@ -1,7 +1,7 @@
 (function () {
 
     // Page components
-    let userMessage, accountList, accountStatus, accountDetails, outgoingList, incomingList, pageOrchestrator = new PageOrchestrator();
+    let userMessage, accountList, accountStatus, accountDetails, outgoingList, incomingList, pageOrchestrator = new PageOrchestrator(); // TODO: transfer form separato
 
     // Event on window load
     window.addEventListener('load', () => {
@@ -66,9 +66,9 @@
                     linkCell.appendChild(anchor); // Add anchor to link cell
                     linkText = document.createTextNode("Account status"); // Create text for anchor
                     anchor.appendChild(linkText); // Add text to anchor
-                    anchor.setAttribute('accountId', account.id); // Add account ID as attribute to anchor
+                    anchor.setAttribute("accountid", account.id); // Add account ID as attribute to anchor
                     anchor.addEventListener('click', (e) => { // Add event on anchor click
-                        accountStatus.show(e.target.getAttribute("accountId"));
+                        accountStatus.show(e.target.getAttribute("accountid"));
                     }, false);
                     anchor.href = "#"; // Add fake href
                     row.appendChild(linkCell); // Add link cell to row
@@ -82,12 +82,13 @@
 
         this.reset = function () {
             this.listContainer.style.visibility = "hidden";
+            this.error.textContent = "";
         };
 
         this.autoClick = function (accountId) {
             let e = new Event('click');
-            let selector = "a[accountId='" + accountId + "']";
-            let anchorToClick = (accountId) ? document.querySelector(selector) : this.listBody.querySelector("a")[0];
+            let selector = "a[accountid='" + accountId + "']";
+            let anchorToClick = (accountId) ? document.querySelector(selector) : this.listBody.querySelectorAll("a")[0];
             anchorToClick.dispatchEvent(e);
         };
     }
@@ -127,7 +128,7 @@
 
         this.show = function(accountId) {
             let that = this;
-            makeCall("GET", "AccountDetails?accountId=" + accountId, null, 
+            makeCall("GET", "AccountDetails?accountId=" + accountId, null,
                 function(request) {
                     if (request.readyState === XMLHttpRequest.DONE) {
                         let message = request.responseText;
@@ -178,6 +179,8 @@
                     }
                 }
             );
+            this.transferForm.reset();
+            this.transferForm.style.visibility = "visible";
         };
 
         this.reset = function() {
@@ -185,6 +188,10 @@
             this.outgoingTransfers.reset(true);
             this.incomingTransfers.reset(false);
             this.transferForm.style.visibility = "hidden";
+            this.accountDetailsError.textContent = "";
+            this.outgoingMessage.textContent = "";
+            this.incomingMessage.textContent = "";
+            this.transferFormError.textContent = "";
         };
 
         this.update = function(account) {
@@ -192,6 +199,7 @@
             this.outgoingTransfers.update();
             this.incomingTransfers.update();
             this.transferForm.reset();
+            this.transferForm.style.visibility = "visible";
         };
     }
 
@@ -199,14 +207,16 @@
     function AccountDetails() {
         
         this.update = function(account) {
-            let accountId = document.getElementById("accountDetailId");
-            accountId.textContent = account.id;
+            let accountid = document.getElementById("accountDetailId");
+            accountid.textContent = account.id;
             let accountBalance = document.getElementById("accountDetailBalance");
             accountBalance.textContent = account.balance;
+            let accountDetailsContainer = document.getElementById("accountDetailsContainer");
+            accountDetailsContainer.style.visibility = "visible";
         };
 
         this.reset = function() {
-            let container = document.getElementById("accountDetailContainer");
+            let container = document.getElementById("accountDetailsContainer");
             container.style.visibility = "hidden";
         };
 
@@ -217,6 +227,8 @@
 
         this.update = function(arrayTransfers, error, transferContainer, transfersBody, outgoing) {
             let length = arrayTransfers.length, body = transfersBody, row, causalCell, amountCell, dateCell, otherAccountCell;
+            transfersBody.innerHTML = ""; // Empty table body
+            error.textContent = "";
             if (length === 0) {
                if (outgoing) {
                    error.textContent = "No outgoing transfer yet";
@@ -224,7 +236,6 @@
                    error.textContent = "No incoming transfer yet";
                }
            } else {
-               transfersBody.innerHTML = ""; // Empty table body
                arrayTransfers.forEach(function (transfer) {
                    // Create row
                    row = document.createElement("tr");

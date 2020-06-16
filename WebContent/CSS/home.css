@@ -34,3 +34,8 @@ td {
 table {
     display: inline-table;
 }
+
+#transfersDiv {
+    padding: 0;
+    display: inline-block;
+}
