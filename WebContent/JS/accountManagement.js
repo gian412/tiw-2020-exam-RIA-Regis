@@ -231,18 +231,22 @@
 
                    causalCell = document.createElement("td"); // Create Causal cell
                    causalCell.textContent = transfer.causal; // Fill Causal cell
+                   causalCell.setAttribute("class", (outgoing) ? "outgoing" : "incoming");
                    row.appendChild(causalCell); // Append Causal cell to row
 
                    amountCell = document.createElement("td"); // Create Amount cell
                    amountCell.textContent = transfer.amount; // Fill Amount cell
+                   amountCell.setAttribute("class", (outgoing) ? "outgoing" : "incoming");
                    row.appendChild(amountCell); // Append Amount cell to row
 
                    dateCell = document.createElement("td"); // Create Date cell
                    dateCell.textContent = transfer.date; // Fill Date cell
+                   dateCell.setAttribute("class", (outgoing) ? "outgoing" : "incoming");
                    row.appendChild(dateCell); // Append Date cell to row
 
                    otherAccountCell = document.createElement("td"); // Create Origin/Destination Account cell
                    otherAccountCell.textContent = (outgoing) ? transfer.destinationAccount : transfer.originAccount; // Fill Origin/Destination Account cell
+                   otherAccountCell.setAttribute("class", (outgoing) ? "outgoing" : "incoming");
                    row.appendChild(otherAccountCell); // Append Origin/Destination Account to row
 
                    body.appendChild(row);
