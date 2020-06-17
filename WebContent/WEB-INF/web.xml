@@ -47,6 +47,7 @@
         <url-pattern>/IncomingTransfers</url-pattern>
         <url-pattern>/OutgoingTransfers</url-pattern>
         <url-pattern>/MakeTransfer</url-pattern>
+        <url-pattern>/GetAddresses</url-pattern>
     </filter-mapping>
 
 </web-app>
